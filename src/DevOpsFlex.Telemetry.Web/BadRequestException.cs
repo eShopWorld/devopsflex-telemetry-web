@@ -15,7 +15,7 @@
     /// Thrown when bad request parameters are passed into a WebAPI method.
     /// </summary>
     [Serializable]
-    internal sealed class BadRequestException : HttpException
+    public sealed class BadRequestException : HttpException
     {
         internal readonly Dictionary<string, string> Parameters = new Dictionary<string, string>();
 
@@ -128,7 +128,7 @@
         /// <param name="condition">The condition <see cref="Func{String, Bool}"/> that is required to pass.</param>
         /// <param name="exceptionExpression">The lamdba used to add the parameter to the <see cref="BadRequestException"/>.</param>
         /// <param name="expressions">The list of lambdas with parameters.</param>
-        internal static void InternalAction([NotNull]Func<string, bool> condition, Expression<Action<BadRequestException, string>> exceptionExpression, params Expression<Func<string>>[] expressions)
+        public static void InternalAction([NotNull]Func<string, bool> condition, Expression<Action<BadRequestException, string>> exceptionExpression, params Expression<Func<string>>[] expressions)
         {
             BadRequestException exception = null;
             foreach (var expression in expressions)
