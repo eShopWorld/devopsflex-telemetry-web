@@ -153,7 +153,7 @@
         /// </summary>
         /// <typeparam name="T">The member type of the expression.</typeparam>
         /// <param name="expression">The expression that we're getting the member name for.</param>
-        /// <returns></returns>
+        /// <returns>The name of the member in the <see cref="Expression"/>.</returns>
         [NotNull]
         internal static string GetMemberName<T>([NotNull]Expression<Func<T>> expression)
         {

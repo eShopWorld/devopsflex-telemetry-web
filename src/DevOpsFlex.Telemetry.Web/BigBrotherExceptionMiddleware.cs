@@ -18,14 +18,14 @@
         /// Initializes a new instance of <see cref="BigBrotherExceptionMiddleware"/>.
         /// </summary>
         /// <param name="next">The next <see cref="RequestDelegate"/> in the pipeline.</param>
-        /// <param name="bb">The <see cref="IBigBrother"/> that we want to stream exception telemetry to.</param>
-        public BigBrotherExceptionMiddleware(RequestDelegate next, IBigBrother bb)
+        /// <param name="bigBrother">The <see cref="IBigBrother"/> that we want to stream exception telemetry to.</param>
+        public BigBrotherExceptionMiddleware(RequestDelegate next, IBigBrother bigBrother)
         {
             _next = next;
 #if DEBUG
-            _bb = bb ?? throw new ArgumentNullException(nameof(bb), $"{nameof(IBigBrother)} isn't registred as a service.");
+            _bb = bigBrother ?? throw new ArgumentNullException(nameof(bigBrother), $"{nameof(IBigBrother)} isn't registred as a service.");
 #else
-            _bb = bb;
+            _bb = bigBrother;
 #endif
         }
 
