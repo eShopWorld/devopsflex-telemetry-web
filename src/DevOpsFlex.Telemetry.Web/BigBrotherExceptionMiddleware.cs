@@ -53,7 +53,7 @@
         /// <param name="context">The HTTP-specific information about an individual HTTP request.</param>
         /// <param name="exception"></param>
         /// <returns>[ASYNC] <see cref="Task"/> future promise.</returns>
-        private async Task HandleExceptionAsync(HttpContext context, Exception exception)
+        internal async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             string result;
 
