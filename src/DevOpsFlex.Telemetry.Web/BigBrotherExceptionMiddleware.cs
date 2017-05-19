@@ -11,8 +11,8 @@
     /// </summary>
     public class BigBrotherExceptionMiddleware
     {
-        private readonly RequestDelegate _next;
-        private readonly IBigBrother _bb;
+        internal RequestDelegate Next;
+        internal IBigBrother Bb;
 
         /// <summary>
         /// Initializes a new instance of <see cref="BigBrotherExceptionMiddleware"/>.
@@ -21,11 +21,11 @@
         /// <param name="bigBrother">The <see cref="IBigBrother"/> that we want to stream exception telemetry to.</param>
         public BigBrotherExceptionMiddleware(RequestDelegate next, IBigBrother bigBrother)
         {
-            _next = next;
+            Next = next;
 #if DEBUG
-            _bb = bigBrother ?? throw new ArgumentNullException(nameof(bigBrother), $"{nameof(IBigBrother)} isn't registred as a service.");
+            Bb = bigBrother ?? throw new ArgumentNullException(nameof(bigBrother), $"{nameof(IBigBrother)} isn't registred as a service.");
 #else
-            _bb = bigBrother;
+            Bb = bigBrother;
 #endif
         }
 
@@ -34,11 +34,11 @@
         /// </summary>
         /// <param name="context">The HTTP-specific information about an individual HTTP request.</param>
         /// <returns>[ASYNC] <see cref="Task"/> future promise.</returns>
-        public async Task Invoke(HttpContext context)
+        public virtual async Task Invoke(HttpContext context)
         {
             try
             {
-                await _next(context);
+                await Next(context);
             }
             catch (Exception ex)
             {
@@ -53,7 +53,7 @@
         /// <param name="context">The HTTP-specific information about an individual HTTP request.</param>
         /// <param name="exception"></param>
         /// <returns>[ASYNC] <see cref="Task"/> future promise.</returns>
-        internal async Task HandleExceptionAsync(HttpContext context, Exception exception)
+        internal virtual async Task HandleExceptionAsync(HttpContext context, Exception exception)
         {
             string result;
 
@@ -77,7 +77,7 @@
                 context.Response.StatusCode = (int)HttpStatusCode.ServiceUnavailable;
             }
 
-            _bb.Publish(exception.ToBbEvent());
+            Bb.Publish(exception.ToBbEvent());
 
             await context.Response.WriteAsync(result);
         }
