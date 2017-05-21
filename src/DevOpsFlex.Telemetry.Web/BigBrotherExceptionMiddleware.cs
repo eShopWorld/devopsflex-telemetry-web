@@ -42,7 +42,7 @@
             }
             catch (Exception ex)
             {
-                await HandleExceptionAsync(context, ex);
+                await HandleException(context, ex);
             }
         }
 
@@ -53,7 +53,7 @@
         /// <param name="context">The HTTP-specific information about an individual HTTP request.</param>
         /// <param name="exception"></param>
         /// <returns>[ASYNC] <see cref="Task"/> future promise.</returns>
-        internal virtual async Task HandleExceptionAsync(HttpContext context, Exception exception)
+        internal virtual async Task HandleException(HttpContext context, Exception exception)
         {
             string result;
 

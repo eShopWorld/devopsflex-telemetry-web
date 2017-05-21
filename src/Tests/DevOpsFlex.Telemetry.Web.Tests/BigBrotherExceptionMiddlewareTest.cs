@@ -31,17 +31,16 @@ public class BigBrotherExceptionMiddlewareTest
 
     public class Invoke
     {
-        //[Fact, IsUnit]
+        [Fact, IsUnit]
         public async Task Test_ExceptionsAreHandled()
         {
-            var mockMiddleware = new Mock<BigBrotherExceptionMiddleware>(MockBehavior.Loose, new RequestDelegate(_ => throw new Exception("KABUM")),
-                new Mock<IBigBrother>().Object) {CallBase = true};
+            var mockMiddleware = new Mock<BigBrotherExceptionMiddleware>(MockBehavior.Loose, new RequestDelegate(_ => throw new Exception("KABUM")), new Mock<IBigBrother>().Object);
             mockMiddleware.Setup(x => x.Invoke(It.IsAny<HttpContext>())).CallBase();
-            mockMiddleware.Setup(x => x.HandleExceptionAsync(It.IsNotNull<HttpContext>(), It.IsNotNull<Exception>())).Throws(new Exception());
+            mockMiddleware.Setup(x => x.HandleException(It.IsAny<HttpContext>(), It.IsAny<Exception>())).Returns(Task.CompletedTask);
 
             await mockMiddleware.Object.Invoke(new Mock<HttpContext>().Object);
 
-            mockMiddleware.Verify(x => x.HandleExceptionAsync(It.IsNotNull<HttpContext>(), It.IsNotNull<Exception>()), Times.Once);
+            mockMiddleware.Verify(x => x.HandleException(It.IsAny<HttpContext>(), It.IsAny<Exception>()), Times.Once);
         }
     }
 }

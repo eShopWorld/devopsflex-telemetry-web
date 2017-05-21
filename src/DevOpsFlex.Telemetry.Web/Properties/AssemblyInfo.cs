@@ -36,3 +36,4 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyFileVersion("1.0.0.0")]
 
 [assembly: InternalsVisibleTo("DevOpsFlex.Telemetry.Web.Tests")]
+[assembly: InternalsVisibleTo("DynamicProxyGenAssembly2")]
