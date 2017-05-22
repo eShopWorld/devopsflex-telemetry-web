@@ -1,4 +1,5 @@
-﻿using DevOpsFlex.Telemetry.Web;
+﻿using System.Linq;
+using DevOpsFlex.Telemetry.Web;
 using DevOpsFlex.Tests.Core;
 using FluentAssertions;
 using Xunit;
@@ -6,25 +7,53 @@ using Xunit;
 // ReSharper disable once CheckNamespace
 public class BadRequestExceptionTest
 {
-    [Fact, IsUnit]
-    public void Test_ThrowIfNullOrWhiteSpace_Throws_WithDoubleParamPocoFailure()
+    public class ToResponse
     {
-        var foo = new TestRequest();
-        var blewUp = false;
-
-        try
+        [Fact, IsUnit]
+        public void Test_AllParameterTypes_ConvertToResponse()
         {
-            BadRequestThrowIf.NullOrWhiteSpace(() => foo.Param1, () => foo.Param2);
-        }
-        catch (BadRequestException e)
-        {
-            blewUp = true;
-            e.Parameters.Should().HaveCount(2);
-            e.Parameters.Should().ContainKey($"{nameof(TestRequest)}.{nameof(TestRequest.Param1)}");
-            e.Parameters.Should().ContainKey($"{nameof(TestRequest)}.{nameof(TestRequest.Param2)}");
-        }
+            const string method = "my method";
+            const string nullParam = "my null param";
+            const string badFormatParam = "my bad format param";
+            const string genericBadParam = "my generic bad param";
+            const string genericBadParamMessage = "this is bad!";
 
-        blewUp.Should().BeTrue();
+            var ex = new BadRequestException(method).AddNull(nullParam)
+                                                    .AddBadFormat(badFormatParam)
+                                                    .Add(genericBadParam, genericBadParamMessage);
+
+            var result = ex.ToResponse();
+
+            result.Parameters.Should().HaveCount(3);
+
+            result.Parameters.Select(p => p.Name).Should().Contain(nullParam);
+            result.Parameters.Select(p => p.Name).Should().Contain(badFormatParam);
+            result.Parameters.Select(p => p.Name).Should().Contain(genericBadParam);
+        }
+    }
+
+    public class NullOrWhiteSpace
+    {
+        [Fact, IsUnit]
+        public void Test_Throws_WithDoubleParamPocoFailure()
+        {
+            var foo = new TestRequest();
+            var blewUp = false;
+
+            try
+            {
+                BadRequestThrowIf.NullOrWhiteSpace(() => foo.Param1, () => foo.Param2);
+            }
+            catch (BadRequestException e)
+            {
+                blewUp = true;
+                e.Parameters.Should().HaveCount(2);
+                e.Parameters.Should().ContainKey($"{nameof(TestRequest)}.{nameof(TestRequest.Param1)}");
+                e.Parameters.Should().ContainKey($"{nameof(TestRequest)}.{nameof(TestRequest.Param2)}");
+            }
+
+            blewUp.Should().BeTrue();
+        }
     }
 }
 
