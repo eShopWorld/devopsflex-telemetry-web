@@ -363,6 +363,7 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="DevOpsFlex.Telemetry.Web.nuspec" />
     <None Include="packages.config">
       <SubType>Designer</SubType>
     </None>
