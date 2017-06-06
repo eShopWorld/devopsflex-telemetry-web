@@ -10,6 +10,7 @@
     using System.Runtime.Serialization;
     using System.Web;
     using JetBrains.Annotations;
+    using Microsoft.AspNetCore.Mvc.ModelBinding;
 
     /// <summary>
     /// Thrown when bad request parameters are passed into a WebAPI method.
@@ -162,6 +163,44 @@
             return expressionBody.Member.MemberType == MemberTypes.Property
                 ? $"{expressionBody.Member.DeclaringType?.Name}.{expressionBody.Member.Name}"
                 : expressionBody.Member.Name;
+        }
+    }
+
+    /// <summary>
+    /// Contains utility conversion extensions from <see cref="ModelStateDictionary"/> to <see cref="BadRequestException"/>.
+    /// </summary>
+    public static class ModelStateDictionaryExtensions
+    {
+        /// <summary>
+        /// Throws a properly formated <see cref="BadRequestException"/> if the <see cref="ModelStateDictionary"/> isn't valid.
+        ///     Does nothing when the <see cref="ModelStateDictionary"/> is valid.
+        /// </summary>
+        /// <param name="modelState">The <see cref="ModelStateDictionary"/> that we are validating.</param>
+        public static void ThrowIfInvalid(this ModelStateDictionary modelState)
+        {
+            if (modelState.IsValid) return;
+
+            var caller = new StackTrace().GetFrames()
+                                         ?.Skip(1)
+                                         .Select(f => f.GetMethod().Name)
+                                         .FirstOrDefault(f => f.ToLower() != "movenext" && f.ToLower() != "start");
+
+            var exception = new BadRequestException(caller);
+
+            foreach (var key in modelState.Keys)
+            {
+                foreach (var error in modelState[key].Errors.Where(e => !string.IsNullOrEmpty(e.ErrorMessage)))
+                {
+                    exception.Add(key, error.ErrorMessage);
+                }
+
+                foreach (var error in modelState[key].Errors.Where(e => e.Exception?.Message != null))
+                {
+                    exception.Add(key, error.Exception.Message);
+                }
+            }
+
+            throw exception;
         }
     }
 }

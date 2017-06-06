@@ -1,6 +1,7 @@
 ﻿namespace DevOpsFlex.Telemetry.Web
 {
     using System;
+    using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
     using Microsoft.AspNetCore.Http;
@@ -53,8 +54,21 @@
         /// <param name="context">The HTTP-specific information about an individual HTTP request.</param>
         /// <param name="exception"></param>
         /// <returns>[ASYNC] <see cref="Task"/> future promise.</returns>
+        /// <remarks>
+        /// This method will unwrap any <see cref="AggregateException"/> until it finds a regular exception
+        ///     and then process the regular exception through the pipeline.
+        /// </remarks>
         internal virtual async Task HandleException(HttpContext context, Exception exception)
         {
+            // Continuously unwrap AggregateException
+            while (exception is AggregateException aex)
+            {
+                if (aex.InnerExceptions.Any())
+                    exception = aex.InnerExceptions.First();
+                else
+                    break;
+            }
+
             string result;
 
             if (exception is BadRequestException badRequest)
@@ -68,9 +82,11 @@
                 result = JsonConvert.SerializeObject(
                     new ErrorResponse
                     {
-                        Message = exception.Message,
 #if DEBUG
+                        Message = exception.Message,
                         StackTrace = exception.StackTrace
+#else
+                        Message = "Sorry, but something bad happened!"
 #endif
                     });
                 context.Response.ContentType = "application/json";
