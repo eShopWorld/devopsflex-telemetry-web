@@ -2,6 +2,7 @@
 using DevOpsFlex.Telemetry.Web;
 using DevOpsFlex.Tests.Core;
 using FluentAssertions;
+using Microsoft.AspNetCore.Mvc.ModelBinding;
 using Xunit;
 
 // ReSharper disable once CheckNamespace
@@ -12,13 +13,12 @@ public class BadRequestExceptionTest
         [Fact, IsUnit]
         public void Test_AllParameterTypes_ConvertToResponse()
         {
-            const string method = "my method";
             const string nullParam = "my null param";
             const string badFormatParam = "my bad format param";
             const string genericBadParam = "my generic bad param";
             const string genericBadParamMessage = "this is bad!";
 
-            var ex = new BadRequestException(method).AddNull(nullParam)
+            var ex = new BadRequestException().AddNull(nullParam)
                                                     .AddBadFormat(badFormatParam)
                                                     .Add(genericBadParam, genericBadParamMessage);
 
@@ -53,6 +53,34 @@ public class BadRequestExceptionTest
             }
 
             blewUp.Should().BeTrue();
+        }
+    }
+
+    public class ThrowIfInvalid
+    {
+        [Fact, IsUnit]
+        public void Test_ModelState_With1Error()
+        {
+            const string errorKey = "my error key";
+            const string errorMsg = "my error message";
+
+            var threwBadRequest = false;
+            var ms = new ModelStateDictionary();
+            ms.AddModelError(errorKey, errorMsg);
+
+            try
+            {
+                ms.ThrowIfInvalid();
+            }
+            catch (BadRequestException e)
+            {
+                threwBadRequest = true;
+                e.Parameters.Should().HaveCount(1);
+                e.Parameters.FirstOrDefault().Key.Should().Be(errorKey);
+                e.Parameters.FirstOrDefault().Value.Should().Be(errorMsg);
+            }
+
+            threwBadRequest.Should().BeTrue();
         }
     }
 }

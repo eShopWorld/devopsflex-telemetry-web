@@ -2,7 +2,6 @@
 {
     using System;
     using System.Collections.Generic;
-    using System.Diagnostics;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Net;
@@ -23,9 +22,8 @@
         /// <summary>
         /// Initializes a new instance of <see cref="BadRequestException"/>.
         /// </summary>
-        /// <param name="method">The WebAPI method called with bad parameters.</param>
-        public BadRequestException(string method)
-            : base((int)HttpStatusCode.BadRequest, $"Bad request calling {method}, details are in {nameof(Parameters)}")
+        public BadRequestException()
+            : base((int) HttpStatusCode.BadRequest, $"Bad request, details are in {nameof(Parameters)}")
         { }
 
         /// <summary>
@@ -138,7 +136,7 @@
 
                 if (exception == null)
                 {
-                    exception = new BadRequestException(new StackFrame(1).GetMethod().Name);
+                    exception = new BadRequestException();
                 }
 
                 exceptionExpression.Compile().Invoke(exception, GetMemberName(expression));
@@ -180,12 +178,7 @@
         {
             if (modelState.IsValid) return;
 
-            var caller = new StackTrace().GetFrames()
-                                         ?.Skip(1)
-                                         .Select(f => f.GetMethod().Name)
-                                         .FirstOrDefault(f => f.ToLower() != "movenext" && f.ToLower() != "start");
-
-            var exception = new BadRequestException(caller);
+            var exception = new BadRequestException();
 
             foreach (var key in modelState.Keys)
             {

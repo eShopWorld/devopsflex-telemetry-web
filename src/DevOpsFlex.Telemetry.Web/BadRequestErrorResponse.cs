@@ -8,6 +8,11 @@
     public class BadRequestErrorResponse : ErrorResponse
     {
         /// <summary>
+        /// Gets and sets the top level caller method that threw this exception directly.
+        /// </summary>
+        public string Caller { get; set; }
+
+        /// <summary>
         /// Gets and sets the list of issues with parameters as part of this <see cref="BadRequestErrorResponse"/>.
         /// </summary>
         public IEnumerable<BadRequestParameter> Parameters { get; set; }
