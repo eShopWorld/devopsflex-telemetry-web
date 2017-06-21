@@ -45,7 +45,7 @@
       <HintPath>..\..\..\packages\DevOpsFlex.Core.1.0.3\lib\net462\DevOpsFlex.Core.dll</HintPath>
     </Reference>
     <Reference Include="DevOpsFlex.Telemetry, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\..\packages\DevOpsFlex.Telemetry.1.2.2\lib\net462\DevOpsFlex.Telemetry.dll</HintPath>
+      <HintPath>..\..\..\packages\DevOpsFlex.Telemetry.1.2.3\lib\net462\DevOpsFlex.Telemetry.dll</HintPath>
     </Reference>
     <Reference Include="DevOpsFlex.Tests.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\..\packages\DevOpsFlex.Tests.Core.1.0.10\lib\net462\DevOpsFlex.Tests.Core.dll</HintPath>

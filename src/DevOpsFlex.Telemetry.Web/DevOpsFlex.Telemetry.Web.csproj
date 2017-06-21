@@ -34,7 +34,7 @@
       <HintPath>..\..\packages\DevOpsFlex.Core.1.0.3\lib\net462\DevOpsFlex.Core.dll</HintPath>
     </Reference>
     <Reference Include="DevOpsFlex.Telemetry, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\..\packages\DevOpsFlex.Telemetry.1.2.2\lib\net462\DevOpsFlex.Telemetry.dll</HintPath>
+      <HintPath>..\..\packages\DevOpsFlex.Telemetry.1.2.3\lib\net462\DevOpsFlex.Telemetry.dll</HintPath>
     </Reference>
     <Reference Include="JetBrains.Annotations, Version=10.4.0.0, Culture=neutral, PublicKeyToken=1010a0d8d6380325, processorArchitecture=MSIL">
       <HintPath>..\..\packages\JetBrains.Annotations.10.4.0\lib\net\JetBrains.Annotations.dll</HintPath>
