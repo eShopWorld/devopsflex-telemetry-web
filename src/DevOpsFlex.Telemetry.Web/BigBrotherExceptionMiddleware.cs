@@ -74,13 +74,11 @@
             if (exception is BadRequestException badRequest)
             {
                 result = JsonConvert.SerializeObject(badRequest.ToResponse());
-                context.Response.OnStarting((ctxResponse) =>
+                if (!context.Response.HasStarted)
                 {
-                    var hCtx = (HttpResponse)ctxResponse;
-                    hCtx.StatusCode = (int)HttpStatusCode.BadRequest;
-                    hCtx.ContentType = "application/json";
-                    return Task.CompletedTask;
-                }, context.Response);
+                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    context.Response.ContentType = "application/json";
+                }              
             }
             else
             {
@@ -94,13 +92,13 @@
                         Message = "Sorry, but something bad happened!"
 #endif
                     });
-                context.Response.OnStarting((ctxResponse) =>
+
+                if (!context.Response.HasStarted)
                 {
-                    var hCtx = (HttpResponse) ctxResponse;
-                    hCtx.StatusCode = (int) HttpStatusCode.ServiceUnavailable;
-                    hCtx.ContentType = "application/json";
-                    return Task.CompletedTask;
-                }, context.Response);              
+                    context.Response.StatusCode = (int) HttpStatusCode.ServiceUnavailable;
+                    context.Response.ContentType = "application/json";
+                }
+
             }
 
             Bb.Publish(exception.ToBbEvent());

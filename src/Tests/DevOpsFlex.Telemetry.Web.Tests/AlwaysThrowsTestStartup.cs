@@ -6,11 +6,11 @@
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.DependencyInjection;
 
-    public class TestStartup
+    public class AlwaysThrowsTestStartup
     {
         internal static readonly BigBrother Bb = new BigBrother("", "");
 
-        public TestStartup(IHostingEnvironment env)
+        public AlwaysThrowsTestStartup(IHostingEnvironment env)
         {
         }
 
