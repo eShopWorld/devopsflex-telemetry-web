@@ -42,5 +42,29 @@ public class BigBrotherExceptionMiddlewareTest
 
             mockMiddleware.Verify(x => x.HandleException(It.IsAny<HttpContext>(), It.IsAny<Exception>()), Times.Once);
         }
+
+        [Fact, IsUnit]
+        public async Task Test_HandlesResponseStarted_GenericException()
+        {
+            var mockMiddleware = new BigBrotherExceptionMiddleware(_ => throw new Exception("KABUM"), new Mock<IBigBrother>().Object);
+
+            var mockHttpContext = new Mock<HttpContext>();
+            mockHttpContext.SetupSet<int>(context => context.Response.StatusCode = It.IsAny<int>()).Throws<InvalidOperationException>();
+
+            await mockMiddleware.Invoke(mockHttpContext.Object);
+
+        }
+
+        [Fact, IsUnit]
+        public async Task Test_HandlesResponseStarted_BadRequestException()
+        {
+            var mockMiddleware = new BigBrotherExceptionMiddleware(_ => throw new BadRequestException(), new Mock<IBigBrother>().Object);            
+
+            var mockHttpContext = new Mock<HttpContext>();
+            mockHttpContext.SetupSet<int>(context => context.Response.StatusCode = It.IsAny<int>()).Throws<InvalidOperationException>();
+
+            await mockMiddleware.Invoke(mockHttpContext.Object);
+
+        }
     }
 }
