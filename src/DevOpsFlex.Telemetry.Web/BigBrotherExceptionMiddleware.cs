@@ -106,6 +106,6 @@
             Bb.Publish(exception.ToBbEvent());
 
             await context.Response.WriteAsync(result);
-        }        
+        }
     }
 }
