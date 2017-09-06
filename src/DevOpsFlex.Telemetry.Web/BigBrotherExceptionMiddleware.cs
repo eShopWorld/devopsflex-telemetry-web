@@ -12,8 +12,8 @@
     /// </summary>
     public class BigBrotherExceptionMiddleware
     {
-        internal RequestDelegate Next;
-        internal IBigBrother Bb;
+        internal readonly RequestDelegate Next;
+        internal readonly IBigBrother Bb;
 
         /// <summary>
         /// Initializes a new instance of <see cref="BigBrotherExceptionMiddleware"/>.
@@ -60,6 +60,12 @@
         /// </remarks>
         internal virtual async Task HandleException(HttpContext context, Exception exception)
         {
+            if (context.Response.HasStarted)
+            {
+                Bb.Publish(new ResponseAlreadyStartedExceptionEvent { Exception = exception });
+                return;
+            }
+
             // Continuously unwrap AggregateException
             while (exception is AggregateException aex)
             {
@@ -71,10 +77,10 @@
 
             string result;
 
+            context.Response.ContentType = "application/json";
             if (exception is BadRequestException badRequest)
             {
                 result = JsonConvert.SerializeObject(badRequest.ToResponse());
-                context.Response.ContentType = "application/json";
                 context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
             }
             else
@@ -89,12 +95,11 @@
                         Message = "Sorry, but something bad happened!"
 #endif
                     });
-                context.Response.ContentType = "application/json";
+
                 context.Response.StatusCode = (int)HttpStatusCode.ServiceUnavailable;
             }
 
             Bb.Publish(exception.ToBbEvent());
-
             await context.Response.WriteAsync(result);
         }
     }
