@@ -69,41 +69,39 @@
                     break;
             }
 
-            string result;
+            string result=string.Empty;
 
-            if (exception is BadRequestException badRequest)
+            if (!context.Response.HasStarted)
             {
-                result = JsonConvert.SerializeObject(badRequest.ToResponse());
-                if (!context.Response.HasStarted)
+                context.Response.ContentType = "application/json";
+                if (exception is BadRequestException badRequest)
                 {
-                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
-                    context.Response.ContentType = "application/json";
-                }              
-            }
-            else
-            {
-                result = JsonConvert.SerializeObject(
-                    new ErrorResponse
-                    {
+                    result = JsonConvert.SerializeObject(badRequest.ToResponse());
+                    context.Response.StatusCode = (int) HttpStatusCode.BadRequest;                    
+                }
+                else
+                {
+                    result = JsonConvert.SerializeObject(
+                        new ErrorResponse
+                        {
 #if DEBUG
-                        Message = exception.Message,
-                        StackTrace = exception.StackTrace
+                            Message = exception.Message,
+                            StackTrace = exception.StackTrace
 #else
                         Message = "Sorry, but something bad happened!"
 #endif
-                    });
+                        });
 
-                if (!context.Response.HasStarted)
-                {
                     context.Response.StatusCode = (int) HttpStatusCode.ServiceUnavailable;
-                    context.Response.ContentType = "application/json";
                 }
-
             }
 
-            Bb.Publish(exception.ToBbEvent());
+            Bb.Publish(exception.ToWebBbEvent(context.Response.HasStarted));
 
-            await context.Response.WriteAsync(result);
+            if (context.Response.HasStarted)
+                await Task.CompletedTask;
+            else
+                await context.Response.WriteAsync(result);
         }
     }
 }
