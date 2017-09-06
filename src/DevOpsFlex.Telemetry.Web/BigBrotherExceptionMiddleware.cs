@@ -12,8 +12,8 @@
     /// </summary>
     public class BigBrotherExceptionMiddleware
     {
-        internal RequestDelegate Next;
-        internal IBigBrother Bb;
+        internal readonly RequestDelegate Next;
+        internal readonly IBigBrother Bb;
 
         /// <summary>
         /// Initializes a new instance of <see cref="BigBrotherExceptionMiddleware"/>.
@@ -60,6 +60,12 @@
         /// </remarks>
         internal virtual async Task HandleException(HttpContext context, Exception exception)
         {
+            if (context.Response.HasStarted)
+            {
+                Bb.Publish(new ResponseAlreadyStartedExceptionEvent { Exception = exception });
+                return;
+            }
+
             // Continuously unwrap AggregateException
             while (exception is AggregateException aex)
             {
@@ -69,39 +75,32 @@
                     break;
             }
 
-            string result=string.Empty;
+            string result;
 
-            if (!context.Response.HasStarted)
+            context.Response.ContentType = "application/json";
+            if (exception is BadRequestException badRequest)
             {
-                context.Response.ContentType = "application/json";
-                if (exception is BadRequestException badRequest)
-                {
-                    result = JsonConvert.SerializeObject(badRequest.ToResponse());
-                    context.Response.StatusCode = (int) HttpStatusCode.BadRequest;                    
-                }
-                else
-                {
-                    result = JsonConvert.SerializeObject(
-                        new ErrorResponse
-                        {
+                result = JsonConvert.SerializeObject(badRequest.ToResponse());
+                context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+            }
+            else
+            {
+                result = JsonConvert.SerializeObject(
+                    new ErrorResponse
+                    {
 #if DEBUG
-                            Message = exception.Message,
-                            StackTrace = exception.StackTrace
+                        Message = exception.Message,
+                        StackTrace = exception.StackTrace
 #else
                         Message = "Sorry, but something bad happened!"
 #endif
-                        });
+                    });
 
-                    context.Response.StatusCode = (int) HttpStatusCode.ServiceUnavailable;
-                }
+                context.Response.StatusCode = (int)HttpStatusCode.ServiceUnavailable;
             }
 
-            Bb.Publish(exception.ToWebBbEvent(context.Response.HasStarted));
-
-            if (context.Response.HasStarted)
-                await Task.CompletedTask;
-            else
-                await context.Response.WriteAsync(result);
+            Bb.Publish(exception.ToBbEvent());
+            await context.Response.WriteAsync(result);
         }
     }
 }

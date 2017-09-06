@@ -355,7 +355,7 @@
     <Reference Include="WindowsBase" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="BbWebExceptionEvent.cs" />
+    <Compile Include="ResponseAlreadyStartedExceptionEvent.cs" />
     <Compile Include="TelemetrySettings.cs" />
     <Compile Include="BadRequestErrorResponse.cs" />
     <Compile Include="BadRequestException.cs" />
