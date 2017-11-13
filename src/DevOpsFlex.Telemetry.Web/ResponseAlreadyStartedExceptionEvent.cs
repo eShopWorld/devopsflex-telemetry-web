@@ -1,5 +1,6 @@
 ﻿namespace DevOpsFlex.Telemetry.Web
 {
+    using System;
     using Core;
 
     /// <summary>
@@ -7,6 +8,10 @@
     /// </summary>
     public class ResponseAlreadyStartedExceptionEvent : BbExceptionEvent
     {
+        public ResponseAlreadyStartedExceptionEvent()
+            : base(new InvalidOperationException("API Response has already started"))
+        { }
+
         public string Reason => $"This Exception was thrown after the API response had already started, so the {nameof(BigBrotherExceptionMiddleware)} returned imediatly and didn't attempt to populate the response";
     }
 }
