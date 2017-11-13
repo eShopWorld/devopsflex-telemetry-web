@@ -25,7 +25,7 @@
                 e =>
                 {
                     blewUp = true;
-                    e.Should().BeOfType<ResponseAlreadyStartedExceptionEvent>();
+                    e.Should().BeOfType<BbExceptionEvent>();
                 }))
             {
                 await client.GetAsync("/");

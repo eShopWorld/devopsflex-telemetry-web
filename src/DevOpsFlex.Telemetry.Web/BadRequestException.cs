@@ -15,7 +15,7 @@
     /// Thrown when bad request parameters are passed into a WebAPI method.
     /// </summary>
     [Serializable]
-    public sealed class BadRequestException : HttpException
+    public sealed class BadRequestException : Exception
     {
         internal readonly Dictionary<string, string> Parameters = new Dictionary<string, string>();
 
@@ -23,7 +23,7 @@
         /// Initializes a new instance of <see cref="BadRequestException"/>.
         /// </summary>
         public BadRequestException()
-            : base((int) HttpStatusCode.BadRequest, $"Bad request, details are in {nameof(Parameters)}")
+            : base($"Bad request, details are in {nameof(Parameters)}")
         { }
 
         /// <summary>
