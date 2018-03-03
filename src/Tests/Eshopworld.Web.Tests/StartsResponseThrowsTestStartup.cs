@@ -1,11 +1,12 @@
-﻿using System;
-using System.Net;
-using Microsoft.AspNetCore.Builder;
-using Microsoft.AspNetCore.Hosting;
-using Microsoft.Extensions.DependencyInjection;
-
-namespace DevOpsFlex.Telemetry.Web.Tests
+﻿namespace Eshopworld.Web.Tests
 {
+    using System;
+    using System.Net;
+    using Microsoft.AspNetCore.Builder;
+    using Microsoft.AspNetCore.Hosting;
+    using Microsoft.Extensions.DependencyInjection;
+    using DevOpsFlex.Telemetry;
+
     public class StartsResponseThrowsTestStartup
     {
         internal static readonly BigBrother Bb = new BigBrother("", "");

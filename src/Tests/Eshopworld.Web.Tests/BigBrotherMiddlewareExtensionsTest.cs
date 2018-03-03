@@ -1,8 +1,8 @@
-﻿namespace DevOpsFlex.Telemetry.Web.Tests
+﻿namespace Eshopworld.Web.Tests
 {
     using System;
     using System.Threading.Tasks;
-    using Core;
+    using DevOpsFlex.Core;
     using DevOpsFlex.Tests.Core;
     using FluentAssertions;
     using Microsoft.AspNetCore.Hosting;

@@ -1,13 +1,11 @@
-﻿namespace DevOpsFlex.Telemetry.Web
+﻿namespace Eshopworld.Web
 {
     using System;
     using System.Collections.Generic;
     using System.Linq;
     using System.Linq.Expressions;
-    using System.Net;
     using System.Reflection;
     using System.Runtime.Serialization;
-    using System.Web;
     using JetBrains.Annotations;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
 

@@ -1,4 +1,4 @@
-﻿namespace DevOpsFlex.Telemetry.Web
+﻿namespace Eshopworld.Web
 {
     /// <summary>
     /// Contains settings related to Telemetry.
