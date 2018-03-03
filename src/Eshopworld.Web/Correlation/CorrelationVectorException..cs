@@ -3,7 +3,7 @@
 namespace Eshopworld.Web.Correlation
 {
     /// <summary>
-    /// exception for correlation namespace
+    /// exception for correlation namespace 
     /// </summary>
     public sealed class CorrelationVectorException: Exception
     {
