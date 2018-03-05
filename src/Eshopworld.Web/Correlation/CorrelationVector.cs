@@ -11,6 +11,7 @@ namespace Eshopworld.Web.Correlation
     /// {Guid}.{id}.{id}
     /// 
     /// each calling level augments the vector by adding a new identifier level
+    /// test
     /// </summary>
     public sealed class CorrelationVector
     {
