@@ -3,7 +3,7 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsPackable>True</IsPackable>
-    <PackageVersion>1.0.0</PackageVersion>
+    <Version>1.0.0</Version>
     <PackageId>Eshopworld.Web</PackageId>
     <Title>Eshopworld.Web</Title>
     <Authors>David Rodrigues, eshopworld</Authors>
