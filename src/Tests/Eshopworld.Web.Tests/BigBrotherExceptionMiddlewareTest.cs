@@ -1,7 +1,6 @@
 ﻿namespace Eshopworld.Web.Tests
 {
     using System;
-    using DevOpsFlex.Telemetry;
     using DevOpsFlex.Tests.Core;
     using FluentAssertions;
     using Microsoft.AspNetCore.Http;
@@ -9,8 +8,9 @@
     using Xunit;
     using System.Threading.Tasks;
     using Web;
+    using Eshopworld.Core;
 
-// ReSharper disable once CheckNamespace
+    // ReSharper disable once CheckNamespace
     public class BigBrotherExceptionMiddlewareTest
     {
         [Fact, IsUnit]

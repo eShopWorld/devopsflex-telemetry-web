@@ -2,8 +2,8 @@
 {
     using System;
     using System.Threading.Tasks;
-    using DevOpsFlex.Core;
     using DevOpsFlex.Tests.Core;
+    using Eshopworld.Core;
     using FluentAssertions;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.TestHost;

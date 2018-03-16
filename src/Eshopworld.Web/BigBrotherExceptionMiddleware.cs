@@ -4,10 +4,9 @@
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
-    using DevOpsFlex.Core;
+    using Eshopworld.Core;
     using Microsoft.AspNetCore.Http;
     using Newtonsoft.Json;
-    using DevOpsFlex.Telemetry;
 
     /// <summary>
     /// The middleware component that handles exceptions through <see cref="IBigBrother"/>.

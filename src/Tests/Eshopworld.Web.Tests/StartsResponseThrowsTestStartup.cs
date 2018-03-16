@@ -2,10 +2,11 @@
 {
     using System;
     using System.Net;
+    using Eshopworld.Core;
+    using Eshopworld.Telemetry;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.DependencyInjection;
-    using DevOpsFlex.Telemetry;
 
     public class StartsResponseThrowsTestStartup
     {
