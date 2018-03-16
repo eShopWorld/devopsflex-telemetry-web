@@ -1,4 +1,4 @@
-# devopsflex-telemetry-web
+# web
 
 Contains ASPNET Core middleware and utility classes to facilitate bootstrapping [devops-telemetry](https://github.com/eShopWorld/devopsflex-telemetry) in ASPNET Core applications
 

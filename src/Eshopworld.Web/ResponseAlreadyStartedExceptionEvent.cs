@@ -1,7 +1,7 @@
-﻿namespace DevOpsFlex.Telemetry.Web
+﻿namespace Eshopworld.Web
 {
     using System;
-    using Core;
+    using Eshopworld.Core;
 
     /// <summary>
     /// BigBrother Web event fire when a reponse has already started (headers had been sent) when the exception handling method is called.

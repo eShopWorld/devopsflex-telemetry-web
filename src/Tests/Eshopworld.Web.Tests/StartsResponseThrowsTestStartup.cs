@@ -1,16 +1,18 @@
-﻿namespace DevOpsFlex.Telemetry.Web.Tests
+﻿namespace Eshopworld.Web.Tests
 {
     using System;
-    using System.Threading.Tasks;
+    using System.Net;
+    using Eshopworld.Core;
+    using Eshopworld.Telemetry;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.DependencyInjection;
 
-    public class AlwaysThrowsTestStartup
+    public class StartsResponseThrowsTestStartup
     {
         internal static readonly BigBrother Bb = new BigBrother("", "");
 
-        public AlwaysThrowsTestStartup(IHostingEnvironment env)
+        public StartsResponseThrowsTestStartup(IHostingEnvironment env)
         {
         }
 
@@ -26,8 +28,11 @@
 
             app.Run(async ctx =>
             {
-                await Task.Yield();
-                throw new Exception("KABUM!!!");
+                ctx.Response.StatusCode = (int) HttpStatusCode.Unauthorized;
+                ctx.Response.ContentType = "text/xml";
+                ctx.Response.ContentLength = 200;
+                await ctx.Response.Body.FlushAsync();
+                throw new ApplicationException();
             });
         }
     }

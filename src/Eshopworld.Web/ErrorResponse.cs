@@ -1,4 +1,4 @@
-﻿namespace DevOpsFlex.Telemetry.Web
+﻿namespace Eshopworld.Web
 {
     /// <summary>
     /// This represents the response entity for error.

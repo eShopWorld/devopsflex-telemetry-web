@@ -1,10 +1,10 @@
-﻿namespace DevOpsFlex.Telemetry.Web
+﻿namespace Eshopworld.Web
 {
     using System;
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
-    using Core;
+    using Eshopworld.Core;
     using Microsoft.AspNetCore.Http;
     using Newtonsoft.Json;
 
