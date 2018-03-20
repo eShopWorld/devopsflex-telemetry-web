@@ -15,6 +15,7 @@
     <RepositoryUrl>https://github.com/eShopWorld/web</RepositoryUrl>
     <IncludeSource>True</IncludeSource>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
+    <DebugType>Full</DebugType>
   </PropertyGroup>
 
 
