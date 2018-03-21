@@ -74,10 +74,21 @@
         /// Initializes a new instance of the <see cref="BadRequestException" /> class with serialized data.</summary>
         /// <param name="info">The <see cref="SerializationInfo" /> that holds the serialized object data about the exception being thrown. </param>
         /// <param name="context">The <see cref="StreamingContext" /> that holds the contextual information about the source or destination.</param>
-        public BadRequestException(SerializationInfo info, StreamingContext context)
+        private BadRequestException(SerializationInfo info, StreamingContext context)
             : base(info, context)
         {
+            Parameters = info.GetValue(nameof(Parameters), typeof(Dictionary<string, string>)) as Dictionary<string, string>;
+        }
+
+        /// <summary>
+        /// serialization logic
+        /// </summary>
+        /// <param name="info"></param>
+        /// <param name="context"></param>
+        public override void GetObjectData(SerializationInfo info, StreamingContext context)
+        {           
             info.AddValue(nameof(Parameters), Parameters);
+            base.GetObjectData(info, context);
         }
 
         /// <summary>

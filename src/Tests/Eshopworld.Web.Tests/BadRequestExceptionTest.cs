@@ -1,6 +1,8 @@
 ﻿namespace Eshopworld.Web.Tests
 {
+    using System.IO;
     using System.Linq;
+    using System.Runtime.Serialization.Formatters.Binary;
     using DevOpsFlex.Tests.Core;
     using FluentAssertions;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
@@ -82,6 +84,29 @@
                 }
 
                 threwBadRequest.Should().BeTrue();
+            }
+        }
+
+        public class SerializationTests
+        {
+            [Fact, IsUnit]
+            public void ISerializationImpl_Success()
+            {
+                var sut = new BadRequestException();
+                sut.Add("test", "msg");
+
+                var stream = new MemoryStream();
+                var serializer = new BinaryFormatter();
+
+                //serialize
+                serializer.Serialize(stream, sut);
+                //deserialize
+                stream.Position = 0;
+                var ds = serializer.Deserialize(stream) as BadRequestException;
+                //assert
+                Assert.NotNull(ds);
+                Assert.Contains(ds.Parameters, i => i.Key == "test" && i.Value == "msg");
+
             }
         }
     }
