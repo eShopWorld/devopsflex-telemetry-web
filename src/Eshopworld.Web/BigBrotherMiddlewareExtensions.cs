@@ -1,5 +1,6 @@
 ﻿namespace Eshopworld.Web
 {
+    using Core;
     using Microsoft.AspNetCore.Builder;
 
     /// <summary>

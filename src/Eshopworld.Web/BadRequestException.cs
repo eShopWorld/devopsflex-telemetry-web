@@ -8,6 +8,7 @@
     using System.Runtime.Serialization;
     using JetBrains.Annotations;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
+    using Newtonsoft.Json;
 
     /// <summary>
     /// Thrown when bad request parameters are passed into a WebAPI method.
@@ -15,7 +16,15 @@
     [Serializable]
     public sealed class BadRequestException : Exception
     {
-        internal readonly Dictionary<string, string> Parameters = new Dictionary<string, string>();
+        /// <summary>
+        /// Gets the current list of parameters that this exception contains.
+        /// </summary>
+        public readonly Dictionary<string, string> Parameters = new Dictionary<string, string>();
+
+        /// <summary>
+        /// Gets a serialized JSON payload to stream to application insights.
+        /// </summary>
+        public string ParametersJson => JsonConvert.SerializeObject(Parameters);
 
         /// <summary>
         /// Initializes a new instance of <see cref="BadRequestException"/>.
