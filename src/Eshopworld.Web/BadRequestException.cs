@@ -2,6 +2,7 @@
 {
     using System;
     using System.Collections.Generic;
+    using System.Collections.Immutable;
     using System.Linq;
     using System.Linq.Expressions;
     using System.Reflection;
@@ -16,10 +17,12 @@
     [Serializable]
     public sealed class BadRequestException : Exception
     {
+        internal readonly IDictionary<string, string> Parameters = new Dictionary<string, string>();
+
         /// <summary>
         /// Gets the current list of parameters that this exception contains.
         /// </summary>
-        public readonly Dictionary<string, string> Parameters = new Dictionary<string, string>();
+        public ImmutableDictionary<string, string> ParameterList => Parameters.ToImmutableDictionary();
 
         /// <summary>
         /// Gets a serialized JSON payload to stream to application insights.
