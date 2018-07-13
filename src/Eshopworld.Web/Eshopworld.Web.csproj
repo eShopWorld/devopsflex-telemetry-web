@@ -3,10 +3,10 @@
   <PropertyGroup>
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsPackable>True</IsPackable>
-    <Version>1.0.1</Version>
+    <Version>1.0.2</Version>
     <PackageId>Eshopworld.Web</PackageId>
     <Title>Eshopworld.Web</Title>
-    <Authors>David Rodrigues, eshopworld</Authors>
+    <Authors>David Rodrigues, eshopworld, Oisin Haken</Authors>
     <Copyright>Copyright eShopWorld 2017</Copyright>
     <Description>eShopWorld common web artefacts</Description>
     <PackageLicenseUrl>https://github.com/eShopWorld/web/blob/master/LICENSE</PackageLicenseUrl>
@@ -16,10 +16,11 @@
     <IncludeSource>True</IncludeSource>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <DebugType>Full</DebugType>
+    <PackageReleaseNotes>telemetry version bump</PackageReleaseNotes>
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Eshopworld.Telemetry" Version="1.0.0" />
+    <PackageReference Include="Eshopworld.Telemetry" Version="1.0.1" />
     <PackageReference Include="JetBrains.Annotations" Version="11.1.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.1" />
     <PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="2.1.1" />
