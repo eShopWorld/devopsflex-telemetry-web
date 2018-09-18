@@ -8,7 +8,8 @@
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using Xunit;
 
-// ReSharper disable once CheckNamespace
+
+    // ReSharper disable once CheckNamespace
     public class BadRequestExceptionTest
     {
         public class ToResponse
