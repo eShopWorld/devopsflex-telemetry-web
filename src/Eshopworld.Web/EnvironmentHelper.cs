@@ -7,6 +7,6 @@ namespace Eshopworld.Web
         /// <summary>
         /// Determines if you are running in Service Fabric or not
         /// </summary>
-        public static bool IsInFabric => Environment.GetEnvironmentVariable("Fabric_ApplicationName") != null;
+        public static bool IsInFabric =>  !string.IsNullOrWhiteSpace(Environment.GetEnvironmentVariable("Fabric_ApplicationName"));
     }
 }
