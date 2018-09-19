@@ -1,20 +1,18 @@
-﻿using DevOpsFlex.Tests.Core;
+﻿using System;
+using DevOpsFlex.Tests.Core;
 using Xunit;
 
 namespace Eshopworld.Web.Tests
 {
     public class EnvironmentTests
     {
-        [Fact, IsUnit]
-        public void Test_CheckInServiceFabric()
+        [Theory, IsUnit]
+        [InlineData("test_ApplicationName", false)]
+        [InlineData("Fabric_ApplicationName", true)]
+        public void Test_CheckInServiceFabric(string variableName, bool expectation)
         {
-            Assert.True(!EnvironmentHelper.IsInFabric);
-        }
-
-        [Fact, IsUnit]
-        public void Test_CheckNotInServiceFabric()
-        {
-            Assert.False(EnvironmentHelper.IsInFabric);
+            Environment.SetEnvironmentVariable(variableName, "hello app");
+            Assert.Equal(expectation, EnvironmentHelper.IsInFabric);
         }
     }
 }
