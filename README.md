@@ -2,6 +2,15 @@
 
 Contains ASPNET Core middleware and utility classes to facilitate bootstrapping [devops-telemetry](https://github.com/eShopWorld/devopsflex-telemetry) in ASPNET Core applications
 
+
+### Helpers
+
+* Checks if the app is running in a Service Fabric or not:
+
+```c#
+EnvironmentHelper.IsInFabric()
+```
+
 ### How do I bootstrap it?
 
 In your Startup `Configure` method just do `UseBigBrotherExceptionHandler` at the start of the pipeline
