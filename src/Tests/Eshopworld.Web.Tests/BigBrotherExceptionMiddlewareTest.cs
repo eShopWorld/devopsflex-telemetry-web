@@ -8,7 +8,7 @@
     using Xunit;
     using System.Threading.Tasks;
     using Web;
-    using Eshopworld.Core;
+    using Core;
 
     // ReSharper disable once CheckNamespace
     public class BigBrotherExceptionMiddlewareTest

@@ -3,7 +3,7 @@
     using System;
     using System.Threading.Tasks;
     using DevOpsFlex.Tests.Core;
-    using Eshopworld.Core;
+    using Core;
     using FluentAssertions;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.AspNetCore.TestHost;
@@ -25,7 +25,7 @@
                 e =>
                 {
                     blewUp = true;
-                    e.Should().BeOfType<BbExceptionEvent>();
+                    e.Should().BeOfType<ExceptionEvent>();
                 }))
             {
                 await client.GetAsync("/");

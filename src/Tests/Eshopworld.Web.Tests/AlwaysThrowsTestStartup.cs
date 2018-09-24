@@ -2,8 +2,8 @@
 {
     using System;
     using System.Threading.Tasks;
-    using Eshopworld.Core;
-    using Eshopworld.Telemetry;
+    using Core;
+    using Telemetry;
     using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Hosting;
     using Microsoft.Extensions.DependencyInjection;

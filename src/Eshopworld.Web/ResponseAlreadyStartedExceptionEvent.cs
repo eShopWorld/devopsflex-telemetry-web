@@ -1,12 +1,12 @@
 ﻿namespace Eshopworld.Web
 {
     using System;
-    using Eshopworld.Core;
+    using Core;
 
     /// <summary>
     /// BigBrother Web event fire when a reponse has already started (headers had been sent) when the exception handling method is called.
     /// </summary>
-    public class ResponseAlreadyStartedExceptionEvent : BbExceptionEvent
+    public class ResponseAlreadyStartedExceptionEvent : ExceptionEvent
     {
         public ResponseAlreadyStartedExceptionEvent()
             : base(new InvalidOperationException("API Response has already started"))
