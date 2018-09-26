@@ -4,7 +4,7 @@
     using System.Linq;
     using System.Net;
     using System.Threading.Tasks;
-    using Eshopworld.Core;
+    using Core;
     using Microsoft.AspNetCore.Http;
     using Newtonsoft.Json;
 
@@ -100,7 +100,7 @@
                 context.Response.StatusCode = (int)HttpStatusCode.ServiceUnavailable;
             }
 
-            Bb.Publish(exception.ToBbEvent());
+            Bb.Publish(exception.ToExceptionEvent());
             await context.Response.WriteAsync(result);
         }
     }
