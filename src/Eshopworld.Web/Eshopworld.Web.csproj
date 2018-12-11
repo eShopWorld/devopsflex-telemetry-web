@@ -6,6 +6,7 @@
 
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsPackable>True</IsPackable>
+    <Version>1.0.4</Version>
     <PackageId>Eshopworld.Web</PackageId>
     <Title>Eshopworld.Web</Title>
     <Authors>David Rodrigues, eshopworld, Oisin Haken, David Guerin</Authors>
@@ -21,12 +22,12 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Eshopworld.Telemetry" Version="2.0.0" />
+    <PackageReference Include="Eshopworld.Telemetry" Version="2.1.2" />
     <PackageReference Include="JetBrains.Annotations" Version="2018.2.1" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.1.2" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.1.1" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.1.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.0" />
+    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
   </ItemGroup>
 
