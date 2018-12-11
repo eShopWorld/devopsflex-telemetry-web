@@ -1,12 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <PackageReleaseNotes>Aligned with the new domain event structure.</PackageReleaseNotes>
 
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsPackable>True</IsPackable>
-    <Version>1.0.4</Version>
     <PackageId>Eshopworld.Web</PackageId>
     <Title>Eshopworld.Web</Title>
     <Authors>David Rodrigues, eshopworld, Oisin Haken, David Guerin</Authors>
