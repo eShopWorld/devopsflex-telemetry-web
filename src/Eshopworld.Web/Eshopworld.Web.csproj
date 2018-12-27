@@ -1,15 +1,15 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>1.1.1</Version>
-    <PackageReleaseNotes>Aligned with the new domain event structure.</PackageReleaseNotes>
+    <Version>2.0.0</Version>
+    <PackageReleaseNotes>Added support to expose http and https endpoints. Added a dependency on Service Fabric.</PackageReleaseNotes>
 
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsPackable>True</IsPackable>
     <PackageId>Eshopworld.Web</PackageId>
     <Title>Eshopworld.Web</Title>
     <Authors>David Rodrigues, eshopworld, Oisin Haken, David Guerin</Authors>
-    <Copyright>Copyright eShopWorld 2017</Copyright>
+    <Copyright>Copyright eShopWorld 2018</Copyright>
     <Description>eShopWorld common web artefacts</Description>
     <PackageLicenseUrl>https://github.com/eShopWorld/web/blob/master/LICENSE</PackageLicenseUrl>
     <PackageProjectUrl>https://github.com/eShopWorld/web</PackageProjectUrl>
@@ -18,15 +18,20 @@
     <IncludeSource>True</IncludeSource>
     <GeneratePackageOnBuild>false</GeneratePackageOnBuild>
     <DebugType>Full</DebugType>
+    <Platform>x64</Platform>
+    <Platforms>x64</Platforms>
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="Eshopworld.DevOps" Version="2.0.0" />
     <PackageReference Include="Eshopworld.Telemetry" Version="2.1.2" />
     <PackageReference Include="JetBrains.Annotations" Version="2018.2.1" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.0" />
+    <PackageReference Include="Microsoft.AspNetCore.Server.Kestrel" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
+    <PackageReference Include="Microsoft.ServiceFabric.AspNetCore.Kestrel" Version="3.3.622" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
   </ItemGroup>
 
