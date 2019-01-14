@@ -15,6 +15,16 @@ namespace Eshopworld.Web
     public static class EswSslExtentions
     {
         /// <summary>
+        /// The ID of an certificate extension field which descibes the propose for which the public key may be used.
+        /// </summary>
+        private const string EnhancedKeyUsageOid = "2.5.29.37";
+
+        /// <summary>
+        /// The ID of the public key usage which allows using the certificate for the TLS authentication of a server.
+        /// </summary>
+        private const string ServerAuthenticationAllowedKeyUsage = "1.3.6.1.5.5.7.3.1";
+
+        /// <summary>
         /// Configures Kestrel to open listener for HTTP or HTTPS connection.
         /// </summary>
         /// <param name="builder">The web host builder.</param>
@@ -164,12 +174,12 @@ namespace Eshopworld.Web
 
             foreach (var extension in cert.Extensions)
             {
-                if (extension.Oid.Value == "2.5.29.37")  // Enhanced Key Usage
+                if (extension.Oid.Value == EnhancedKeyUsageOid)
                 {
                     var eku = (X509EnhancedKeyUsageExtension)extension;
                     foreach (var oid in eku.EnhancedKeyUsages)
                     {
-                        if (oid.Value == "1.3.6.1.5.5.7.3.1") // Server Authentication
+                        if (oid.Value == ServerAuthenticationAllowedKeyUsage)
                             return true;
                     }
                 }
