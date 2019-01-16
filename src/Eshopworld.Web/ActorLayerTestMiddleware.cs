@@ -96,7 +96,7 @@
         private readonly ActorLayerTestMiddlewareOptions _options;
         private readonly IBigBrother _bigBrother;
         private readonly Lazy<Dictionary<string, ActorMethod>> _actorMethods;
-        private readonly DateTime _createdAt = DateTime.Now;
+        private readonly DateTime? _activeUntil;
         private bool _isAlive = true;
 
         /// <summary>
@@ -112,6 +112,8 @@
             _bigBrother = bigBrother;
             _actorMethods = new Lazy<Dictionary<string, ActorMethod>>(
                 () => CreateActorMethodsDictionary(GetAssemblies(_options.InterfaceAssemblies)));
+
+            _activeUntil = DateTime.UtcNow + _options.KillWindow;
         }
 
         /// <summary>
@@ -128,7 +130,7 @@
 
             if (isTest && _isAlive)
             {
-                if (_options.KillWindow.HasValue && _createdAt.Add(_options.KillWindow.Value) > DateTime.Now)
+                if (_activeUntil > DateTime.UtcNow)
                     _isAlive = false;
                 else
                     return PrepareActorCall(context, remaining);
