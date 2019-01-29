@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>2.1.0</Version>
-    <PackageReleaseNotes>Added the actor test middleware to the package.</PackageReleaseNotes>
+    <Version>2.1.1</Version>
+    <PackageReleaseNotes>Refactored the extension name for the actor test layer middleware.</PackageReleaseNotes>
 
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsPackable>True</IsPackable>
