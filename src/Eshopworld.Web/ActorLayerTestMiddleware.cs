@@ -58,7 +58,7 @@
         /// </summary>
         /// <param name="app">The <see cref="IApplicationBuilder"/> to add the middleware to.</param>
         /// <param name="options">The middleware's parameters.</param>
-        public static IApplicationBuilder ActorLayerTestDirectCall(this IApplicationBuilder app, ActorLayerTestMiddlewareOptions options)
+        public static IApplicationBuilder UseActorLayerTestDirectCall(this IApplicationBuilder app, ActorLayerTestMiddlewareOptions options)
         {
             if (options == null)
             {

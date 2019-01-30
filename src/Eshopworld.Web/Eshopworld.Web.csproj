@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>2.1.1</Version>
+    <Version>2.1.2</Version>
     <PackageReleaseNotes>Refactored the extension name for the actor test layer middleware.</PackageReleaseNotes>
 
     <TargetFramework>netstandard2.0</TargetFramework>
