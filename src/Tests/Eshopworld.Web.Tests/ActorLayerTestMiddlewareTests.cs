@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Fabric;
 using System.Net;
 using System.Net.Http;
 using System.Security.Claims;
@@ -212,7 +213,8 @@ namespace Eshopworld.Web.Tests
             public void Configure(IApplicationBuilder app, IHostingEnvironment env)
             {
                 app.UseAuthentication();
-                app.UseActorLayerTestDirectCall(new ActorLayerTestMiddlewareOptions{AuthorizationPolicyName="AssertTestScope"});
+                app.UseMiddleware<ActorLayerTestMiddleware>(new ActorLayerTestMiddlewareOptions
+                    {AuthorizationPolicyName = "AssertTestScope"});
 
                 app.UseMvc();
             }
