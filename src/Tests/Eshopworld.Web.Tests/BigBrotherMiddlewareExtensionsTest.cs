@@ -2,7 +2,7 @@
 {
     using System;
     using System.Threading.Tasks;
-    using DevOpsFlex.Tests.Core;
+    using Eshopworld.Tests.Core;
     using Core;
     using FluentAssertions;
     using Microsoft.AspNetCore.Hosting;

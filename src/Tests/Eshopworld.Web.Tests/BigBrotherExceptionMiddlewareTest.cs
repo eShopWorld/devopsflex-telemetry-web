@@ -1,8 +1,8 @@
 ﻿namespace Eshopworld.Web.Tests
 {
     using System;
-    using DevOpsFlex.Tests.Core;
     using FluentAssertions;
+    using Eshopworld.Tests.Core;
     using Microsoft.AspNetCore.Http;
     using Moq;
     using Xunit;

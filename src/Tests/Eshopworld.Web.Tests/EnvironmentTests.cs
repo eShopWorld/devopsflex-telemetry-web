@@ -1,5 +1,5 @@
 ﻿using System;
-using DevOpsFlex.Tests.Core;
+using Eshopworld.Tests.Core;
 using FluentAssertions;
 using Xunit;
 

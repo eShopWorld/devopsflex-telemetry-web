@@ -17,6 +17,9 @@
     using Microsoft.AspNetCore.Http;
     using Microsoft.ServiceFabric.Actors;
     using Microsoft.ServiceFabric.Actors.Client;
+    using Microsoft.AspNetCore.Authentication;
+    using Microsoft.AspNetCore.Authorization;
+    using Microsoft.AspNetCore.Authorization.Policy;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -46,6 +49,11 @@
         /// Optional kill switch window <see cref="TimeSpan"/> to stop using the middleware.
         /// </summary>
         public TimeSpan? KillWindow { get; set; }
+
+        /// <summary>
+        /// name of the authorization (authentication) policy to use 
+        /// </summary>
+        public string AuthorizationPolicyName { get; set; }
     }
 
     /// <summary>
@@ -65,19 +73,25 @@
                 throw new ArgumentNullException(nameof(options));
             }
 
-            if (options.StatelessServiceContext == null)
-            {
-                throw new ArgumentException("The StatelessServiceContext property must not be null", nameof(options));
-            }
+            //if (options.StatelessServiceContext == null)
+            //{
+            //    throw new ArgumentException("The StatelessServiceContext property must not be null", nameof(options));
+            //}
 
-            if (options.PathPrefix.Value == null)
-            {
-                throw new ArgumentException("The PathPrefix property must not be null", nameof(options));
-            }
+            //if (options.PathPrefix.Value == null)
+            //{
+            //    throw new ArgumentException("The PathPrefix property must not be null", nameof(options));
+            //}
 
-            if (options.PathPrefix.Value.Length < 2 || options.PathPrefix.Value.EndsWith("/"))
+            //if (options.PathPrefix.Value.Length < 2 || options.PathPrefix.Value.EndsWith("/"))
+            //{
+            //    throw new ArgumentException("The value of the PathPrefix property is invalid.", nameof(options));
+            //}
+
+            if (string.IsNullOrWhiteSpace(options.AuthorizationPolicyName))
             {
-                throw new ArgumentException("The value of the PathPrefix property is invalid.", nameof(options));
+                throw new ArgumentException("Authorization policy name must be set",
+                    nameof(options.AuthorizationPolicyName));
             }
 
             return app.UseMiddleware<ActorLayerTestMiddleware>(options);
@@ -95,6 +109,8 @@
         private readonly RequestDelegate _next;
         private readonly ActorLayerTestMiddlewareOptions _options;
         private readonly IBigBrother _bigBrother;
+        private readonly IAuthorizationPolicyProvider _policyProvider;
+        private readonly IPolicyEvaluator _policyEvaluator;
         private readonly Lazy<Dictionary<string, ActorMethod>> _actorMethods;
         private readonly DateTime? _activeUntil;
         private bool _isAlive = true;
@@ -105,11 +121,15 @@
         /// <param name="next">The next request middleware handler.</param>
         /// <param name="options">The middleware parameters.</param>
         /// <param name="bigBrother">The telemetry sink.</param>
-        public ActorLayerTestMiddleware(RequestDelegate next, ActorLayerTestMiddlewareOptions options, IBigBrother bigBrother)
+        /// <param name="policyEvaluator">asp.net authorization policy evaluator instance - normally set up by MVC pipeline</param>
+        /// <param name="policyProvider">asp.net authorization policy provider instance - normally set up by MVC pipeline</param>
+        public ActorLayerTestMiddleware(RequestDelegate next, ActorLayerTestMiddlewareOptions options, IBigBrother bigBrother, IAuthorizationPolicyProvider policyProvider, IPolicyEvaluator policyEvaluator)
         {
             _next = next;
             _options = options;
             _bigBrother = bigBrother;
+            _policyProvider = policyProvider;
+            _policyEvaluator = policyEvaluator;
             _actorMethods = new Lazy<Dictionary<string, ActorMethod>>(
                 () => CreateActorMethodsDictionary(GetAssemblies(_options.InterfaceAssemblies)));
 
@@ -120,9 +140,42 @@
         /// Processes the HTTP request.
         /// </summary>
         /// <param name="context">The HTTP request context</param>
-        public Task Invoke(HttpContext context)
+        public async Task Invoke(HttpContext context)
         {
-            // TODO: authorization
+            //test security
+            var policy = await _policyProvider.GetPolicyAsync(_options.AuthorizationPolicyName);
+            if (policy == null)
+            {
+                await context.ForbidAsync(); //there is no point in retrying
+                return;
+            }
+
+            //authentication checks
+            var authenticationResult = await
+                _policyEvaluator.AuthenticateAsync(policy,
+                    context);
+
+            if (!authenticationResult.Succeeded)
+            {
+                await context.ChallengeAsync();
+                return;
+            }
+
+            //authorization checks
+            var authorizationResult = await _policyEvaluator.AuthorizeAsync(policy, authenticationResult, context, null);
+
+            if (authorizationResult.Challenged)
+            {
+                await context.ChallengeAsync();
+                return;
+            }
+
+            if (authorizationResult.Forbidden)
+            {
+                await context.ForbidAsync();
+                return;
+            }
+
             var isTest = context.Request.Path.StartsWithSegments(
                 _options.PathPrefix,
                 StringComparison.OrdinalIgnoreCase,
@@ -133,10 +186,10 @@
                 if (_activeUntil > DateTime.UtcNow)
                     _isAlive = false;
                 else
-                    return PrepareActorCall(context, remaining);
+                    await PrepareActorCall(context, remaining);
             }
 
-            return _next(context);
+            await _next(context);
         }
 
         private async Task PrepareActorCall(HttpContext context, PathString remaining)

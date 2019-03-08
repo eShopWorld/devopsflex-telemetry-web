@@ -2,8 +2,8 @@
 {
     using System.IO;
     using System.Linq;
+    using Eshopworld.Tests.Core;
     using System.Runtime.Serialization.Formatters.Binary;
-    using DevOpsFlex.Tests.Core;
     using FluentAssertions;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using Xunit;
