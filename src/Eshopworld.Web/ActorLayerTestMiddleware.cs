@@ -73,20 +73,20 @@
                 throw new ArgumentNullException(nameof(options));
             }
 
-            //if (options.StatelessServiceContext == null)
-            //{
-            //    throw new ArgumentException("The StatelessServiceContext property must not be null", nameof(options));
-            //}
+            if (options.StatelessServiceContext == null)
+            {
+                throw new ArgumentException("The StatelessServiceContext property must not be null", nameof(options));
+            }
 
-            //if (options.PathPrefix.Value == null)
-            //{
-            //    throw new ArgumentException("The PathPrefix property must not be null", nameof(options));
-            //}
+            if (options.PathPrefix.Value == null)
+            {
+                throw new ArgumentException("The PathPrefix property must not be null", nameof(options));
+            }
 
-            //if (options.PathPrefix.Value.Length < 2 || options.PathPrefix.Value.EndsWith("/"))
-            //{
-            //    throw new ArgumentException("The value of the PathPrefix property is invalid.", nameof(options));
-            //}
+            if (options.PathPrefix.Value.Length < 2 || options.PathPrefix.Value.EndsWith("/"))
+            {
+                throw new ArgumentException("The value of the PathPrefix property is invalid.", nameof(options));
+            }
 
             if (string.IsNullOrWhiteSpace(options.AuthorizationPolicyName))
             {
