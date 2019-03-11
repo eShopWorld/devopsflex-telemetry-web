@@ -7,7 +7,7 @@ namespace Eshopworld.Web.Tests
 {
     public class EnvironmentTests
     {
-        [Theory, IsUnit]
+        [Theory, IsLayer0]
         [InlineData("test_ApplicationName", false)]
         [InlineData("Fabric_ApplicationName", true)]
         public void Test_CheckInServiceFabric(string variableName, bool expectation)

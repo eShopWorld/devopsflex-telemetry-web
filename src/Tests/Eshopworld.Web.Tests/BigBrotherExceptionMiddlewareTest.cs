@@ -13,7 +13,7 @@
     // ReSharper disable once CheckNamespace
     public class BigBrotherExceptionMiddlewareTest
     {
-        [Fact, IsUnit]
+        [Fact, IsLayer0]
         public void Ensure_CtorThrows_WithNullBigBrother()
         {
             var blewUp = false;
@@ -33,7 +33,7 @@
 
         public class Invoke
         {
-            [Fact, IsUnit]
+            [Fact, IsLayer0]
             public async Task Test_ExceptionsAreHandled()
             {
                 var mockMiddleware = new Mock<BigBrotherExceptionMiddleware>(MockBehavior.Loose,
@@ -48,7 +48,7 @@
                     Times.Once);
             }
 
-            [Fact, IsUnit]
+            [Fact, IsLayer0]
             public async Task Test_HandlesResponseStarted_GenericException()
             {
                 var mockMiddleware = new BigBrotherExceptionMiddleware(_ => throw new Exception("KABUM"),
@@ -64,7 +64,7 @@
 
             }
 
-            [Fact, IsUnit]
+            [Fact, IsLayer0]
             public async Task Test_HandlesResponseStarted_BadRequestException()
             {
                 var mockMiddleware = new BigBrotherExceptionMiddleware(_ => throw new BadRequestException(),
