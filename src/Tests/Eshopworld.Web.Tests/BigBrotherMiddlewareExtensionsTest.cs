@@ -2,7 +2,7 @@
 {
     using System;
     using System.Threading.Tasks;
-    using DevOpsFlex.Tests.Core;
+    using Eshopworld.Tests.Core;
     using Core;
     using FluentAssertions;
     using Microsoft.AspNetCore.Hosting;
@@ -11,7 +11,7 @@
 
     public class BigBrotherMiddlewareExtensionsTest
     {
-        [Fact, IsIntegration]
+        [Fact, IsLayer1]
         public async Task Test_Middleware_PushesToBigBrother()
         {
             var blewUp = false;
@@ -33,7 +33,7 @@
             }
         }
 
-        [Fact, IsIntegration]
+        [Fact, IsLayer1]
         public async Task Test_MiddleWare_PushesToBigBrotherWhenResponseStarted()
         {
             var blewUp = false;

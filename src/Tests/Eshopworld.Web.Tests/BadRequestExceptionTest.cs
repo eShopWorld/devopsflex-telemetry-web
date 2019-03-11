@@ -2,8 +2,8 @@
 {
     using System.IO;
     using System.Linq;
+    using Eshopworld.Tests.Core;
     using System.Runtime.Serialization.Formatters.Binary;
-    using DevOpsFlex.Tests.Core;
     using FluentAssertions;
     using Microsoft.AspNetCore.Mvc.ModelBinding;
     using Xunit;
@@ -14,7 +14,7 @@
     {
         public class ToResponse
         {
-            [Fact, IsUnit]
+            [Fact, IsLayer0]
             public void Test_AllParameterTypes_ConvertToResponse()
             {
                 const string nullParam = "my null param";
@@ -38,7 +38,7 @@
 
         public class NullOrWhiteSpace
         {
-            [Fact, IsUnit]
+            [Fact, IsLayer0]
             public void Test_Throws_WithDoubleParamPocoFailure()
             {
                 var foo = new TestRequest();
@@ -62,7 +62,7 @@
 
         public class ThrowIfInvalid
         {
-            [Fact, IsUnit]
+            [Fact, IsLayer0]
             public void Test_ModelState_With1Error()
             {
                 const string errorKey = "my error key";
@@ -90,7 +90,7 @@
 
         public class SerializationTests
         {
-            [Fact, IsUnit]
+            [Fact, IsLayer0]
             public void ISerializationImpl_Success()
             {
                 var sut = new BadRequestException();
