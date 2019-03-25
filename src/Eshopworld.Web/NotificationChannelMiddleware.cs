@@ -62,13 +62,22 @@ namespace Eshopworld.Web
             {
                 //parse out fully qualified typename and assembly - we effectively expect the c# type resolver notation
                 //structurally this is - Namespace.ContainingClass(+NestedClass)(,MyAssembly) - nested class and assembly designation are optional parts
-                var type = Type.GetType(remaining.ToString().TrimStart('/'), true); //let it blow up if type not found or deserialization fails (to be caught higher up = BB)
+                
+                Type resolvedNotificationType;
+                if (string.IsNullOrWhiteSpace(remaining.ToString()) || (resolvedNotificationType= Type.GetType(remaining.ToString().TrimStart('/'), false))==null)
+                {
+                    context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
+                    context.Response.ContentType = "text/plain";
+                    await context.Response.WriteAsync($"Type '{remaining.ToString().TrimStart('/')}' cannot be resolved");
+
+                    return;
+                }
 
                 using (var reader
                     = new StreamReader(context.Request.Body, Encoding.UTF8, true, 1024, true))
                 {
                     var bodyStr = reader.ReadToEnd();
-                    _observable.NewEvent(JsonConvert.DeserializeObject(bodyStr, type, _options.JsonSerializerSettings));
+                    _observable.NewEvent(JsonConvert.DeserializeObject(bodyStr, resolvedNotificationType, _options.JsonSerializerSettings));
                 }
 
                 context.Response.StatusCode = (int) HttpStatusCode.OK;

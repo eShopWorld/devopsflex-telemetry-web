@@ -213,6 +213,18 @@ namespace Eshopworld.Web.Tests
             response.StatusCode.Should().Be((int)HttpStatusCode.Unauthorized);
         }
 
+        [Fact, IsLayer1]
+        public async Task UnrecognizedTypeReturnsBadRequest()
+        {
+            var f = new TestApiFactory();
+            var cl = f.CreateClient();
+            cl.SetBearerToken(await GetAccessToken());
+
+            var response = await cl.PostAsync("/notification/blah", new StringContent(JsonConvert.SerializeObject(new TestNotificationSubType()), Encoding.UTF8, "application/json"));
+            response.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            (await response.Content.ReadAsStringAsync()).Should().Be("Type 'blah' cannot be resolved");
+        }
+
         private HttpContext CreateTestHttpContext()
         {
             var ctx = new DefaultHttpContext();
