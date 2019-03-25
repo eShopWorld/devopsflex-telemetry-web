@@ -198,7 +198,7 @@ namespace Eshopworld.Web.Tests
                     .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
 
                 services.AddLogging();
-                services.Add(new ServiceDescriptor(typeof(IBigBrother), new BigBrother("","")));
+                services.Add(new ServiceDescriptor(typeof(IBigBrother), Mock.Of<IBigBrother>()));
 
             }
 
