@@ -9,7 +9,6 @@ using System.Threading;
 using System.Threading.Tasks;
 using Eshopworld.Core;
 using Eshopworld.DevOps;
-using Eshopworld.Telemetry;
 using Eshopworld.Tests.Core;
 using EShopworld.Security.Services.Testing.Token;
 using FluentAssertions;
