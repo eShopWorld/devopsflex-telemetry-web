@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>2.1.4</Version>
-    <PackageReleaseNotes>Added authorization check to the middleware test pipeline</PackageReleaseNotes>
+    <Version>2.1.5</Version>
+    <PackageReleaseNotes>added notification channel middleware</PackageReleaseNotes>
 
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsPackable>True</IsPackable>
@@ -34,6 +34,7 @@
     <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="3.3.638" />
     <PackageReference Include="Microsoft.ServiceFabric.AspNetCore.Kestrel" Version="3.3.638" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
+    <PackageReference Include="System.Reactive" Version="4.2.0-preview.102" />
   </ItemGroup>
 
 </Project>
