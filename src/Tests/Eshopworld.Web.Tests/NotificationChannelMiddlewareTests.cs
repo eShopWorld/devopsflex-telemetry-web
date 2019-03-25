@@ -320,7 +320,7 @@ namespace Eshopworld.Web.Tests
             public void Configure(IApplicationBuilder app, IHostingEnvironment env)
             {
                 app.UseAuthentication();
-                app.UseMiddleware<NotificationChannelMiddleware>(new NotificationChannelMiddlewareOptions
+                app.UseNotification(new NotificationChannelMiddlewareOptions
                     { AuthorizationPolicyName = "AssertTestScope" });
 
                 app.UseMvc();

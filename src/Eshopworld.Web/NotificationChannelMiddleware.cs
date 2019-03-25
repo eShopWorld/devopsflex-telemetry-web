@@ -3,6 +3,7 @@ using System.IO;
 using System.Net;
 using System.Text;
 using System.Threading.Tasks;
+using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
@@ -26,6 +27,32 @@ namespace Eshopworld.Web
         /// (de)serialization settings to use, null denotes defaults will be applied inline with newtonsoft internal implementation
         /// </summary>
         public JsonSerializerSettings JsonSerializerSettings { get; set; }
+    }
+
+    public static class NotificationChannelMiddlewareExtensions
+    {
+        /// <summary>
+        /// Enables handling of HTTP requests which are directly used to 
+        /// </summary>
+        /// <param name="app">The <see cref="IApplicationBuilder"/> to add the middleware to.</param>
+        /// <param name="options">The middleware's parameters.</param>
+        public static IApplicationBuilder UseNotification(this IApplicationBuilder app,
+            NotificationChannelMiddlewareOptions options)
+        {
+            if (string.IsNullOrWhiteSpace(options.AuthorizationPolicyName))
+            {
+                throw new ArgumentException("The value of the AuthorizationPolicyName property is invalid.", nameof(options));
+            }
+
+            if (string.IsNullOrWhiteSpace(options.UrlPrefix))
+            {
+                throw new ArgumentException("The value of the UrlPrefix property is invalid.", nameof(options));
+            }
+
+
+            return app.UseMiddleware<NotificationChannelMiddleware>(options,
+                app.ApplicationServices.GetService(typeof(NotificationObservableHost)));
+        }
     }
 
     /// <summary>
