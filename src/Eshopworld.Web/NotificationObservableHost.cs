@@ -28,9 +28,9 @@ namespace Eshopworld.Web
         /// telemetry purposes etc.
         /// </summary>
         /// <param name="subscriber">observing delegate</param>
-        public void SubscribeToAll(Action<object> subscriber)
+        public IDisposable SubscribeToAll(Action<object> subscriber)
         {
-            Subscribe<object>(subscriber);
+            return Subscribe<object>(subscriber);
         }
 
         /// <summary>
@@ -38,12 +38,15 @@ namespace Eshopworld.Web
         /// </summary>
         /// <typeparam name="T">target type to subscribe</typeparam>
         /// <param name="subscriber">observing delegate</param>
-        public void Subscribe<T>(Action<object> subscriber) where T : class
+        /// <returns>subscription <see cref="IDisposable"/></returns>
+        public IDisposable Subscribe<T>(Action<T> subscriber) where T : class
         {
             if (subscriber != null)
             {              
-                _observable.OfType<T>().Subscribe(subscriber);
+                return _observable.OfType<T>().Subscribe(subscriber);
             }
+
+            return null;
         }
 
         /// <inheritdoc />
