@@ -31,20 +31,14 @@ namespace Eshopworld.Web.Tests
     public class NotificationChannelMiddlewareTests
     {
         [Fact, IsLayer1]
-        public async Task TestNotificationFlowMultipleSubscribers()
+        public async Task TestNotificationFlow()
         {
             var token = await GetAccessToken();
 
             var f = new TestApiFactory();
             var cl = f.CreateClient();
-            
-            var observable = (NotificationObservableHost) f.Server.Host.Services.GetService(typeof(NotificationObservableHost));
 
-            var signalA = new ManualResetEvent(false);
-            observable.Subscribe<TestNotification>((n) => { signalA.Set(); });
-
-            var signalB = new ManualResetEvent(false);
-            observable.Subscribe<TestNotificationSubType>((n) => { signalB.Set(); });
+            var observable = (ResetEventTestObserver) f.Server.Host.Services.GetService(typeof(ResetEventTestObserver));           
 
             cl.SetBearerToken(token);
 
@@ -52,71 +46,27 @@ namespace Eshopworld.Web.Tests
 
             response.IsSuccessStatusCode.Should().BeTrue();
 
-            signalA.WaitOne(TimeSpan.FromSeconds(1)).Should().BeTrue();
-            signalB.WaitOne(TimeSpan.FromSeconds(1)).Should().BeTrue();
+            observable.TestNotificationSubTypeResetEvent.WaitOne(TimeSpan.FromSeconds(1)).Should().BeTrue();
         }
 
         [Fact, IsLayer1]
-        public async Task TestNotificationFlowHotness()
+        public async Task TestNotificationFlowDifferentMessages()
         {
             var token = await GetAccessToken();
 
             var f = new TestApiFactory();
             var cl = f.CreateClient();
 
-            var observable = (NotificationObservableHost)f.Server.Host.Services.GetService(typeof(NotificationObservableHost));
-
-            var countForA = 0;
-            var signalA = new ManualResetEvent(false);
-            observable.Subscribe<TestNotification>((n) =>
-            {
-                signalA.Set();
-                countForA++;
-            });            
+            var observable = (ResetEventTestObserver)f.Server.Host.Services.GetService(typeof(ResetEventTestObserver));
 
             cl.SetBearerToken(token);
 
-            var response = await cl.PostAsync("/notification/Eshopworld.Web.Tests.NotificationChannelMiddlewareTests+TestNotificationSubType,Eshopworld.Web.Tests", new StringContent(JsonConvert.SerializeObject(new TestNotificationSubType()), Encoding.UTF8, "application/json"));
+            var response = await cl.PostAsync("/notification/Eshopworld.Web.Tests.NotificationChannelMiddlewareTests+TestNotification,Eshopworld.Web.Tests", new StringContent(JsonConvert.SerializeObject(new TestNotificationSubType()), Encoding.UTF8, "application/json"));
+
             response.IsSuccessStatusCode.Should().BeTrue();
-
-            var countForB = 0;
-            var signalB = new ManualResetEvent(false);
-            observable.Subscribe<TestNotificationSubType>((n) => { signalB.Set();
-                countForB++;
-            });
-
-            response = await cl.PostAsync("/notification/Eshopworld.Web.Tests.NotificationChannelMiddlewareTests+TestNotificationSubType,Eshopworld.Web.Tests", new StringContent(JsonConvert.SerializeObject(new TestNotificationSubType()), Encoding.UTF8, "application/json"));
-            response.IsSuccessStatusCode.Should().BeTrue();
-
-            signalA.WaitOne(TimeSpan.FromSeconds(1)).Should().BeTrue();
-            signalB.WaitOne(TimeSpan.FromSeconds(1)).Should().BeTrue();
-
-            countForA.Should().Be(2);
-            countForB.Should().Be(1);
-        }
-
-
-        [Fact, IsLayer1]
-        public async Task TestNotificationCatchAllFlow()
-        {
-            var token = await GetAccessToken();
-
-            var f = new TestApiFactory();
-            var cl = f.CreateClient();
-
-            var observable = (NotificationObservableHost)f.Server.Host.Services.GetService(typeof(NotificationObservableHost));
-
-            int x=0;
-            observable.SubscribeToAll((msg) => x++);
-
-            cl.SetBearerToken(token);
-
-            var response = await cl.PostAsync("/notification/Eshopworld.Web.Tests.NotificationChannelMiddlewareTests+TestNotification,Eshopworld.Web.Tests", new StringContent(JsonConvert.SerializeObject(new TestNotification()), Encoding.UTF8, "application/json"));
-            response.IsSuccessStatusCode.Should().BeTrue();
-            response = await cl.PostAsync("/notification/Eshopworld.Web.Tests.NotificationChannelMiddlewareTests+TestNotificationSubType,Eshopworld.Web.Tests", new StringContent(JsonConvert.SerializeObject(new TestNotificationSubType()), Encoding.UTF8, "application/json"));
-            response.IsSuccessStatusCode.Should().BeTrue();
-
-            x.Should().Be(2);
+           
+            observable.TestNotificationResetEvent.WaitOne(TimeSpan.FromSeconds(1)).Should().BeTrue();
+            observable.TestNotificationSubTypeResetEvent.WaitOne(TimeSpan.FromSeconds(1)).Should().BeFalse();
         }
 
         [Fact, IsLayer0]
@@ -124,10 +74,10 @@ namespace Eshopworld.Web.Tests
         {
             var nextDelegateMock = new Mock<RequestDelegate>();
 
-            var mw = new NotificationChannelMiddleware(nextDelegateMock.Object, new NotificationChannelMiddlewareOptions(), 
-                new NotificationObservableHost());
+            var mw = new NotificationChannelMiddleware(new NotificationChannelMiddlewareOptions());
 
             var testContext = CreateTestHttpContext();
+            mw.Delegate = nextDelegateMock.Object;
             await mw.Invoke(testContext);
             testContext.Response.StatusCode.Should().Be((int)HttpStatusCode.Forbidden);
         }
@@ -139,10 +89,16 @@ namespace Eshopworld.Web.Tests
 
             var testContext = CreateTestHttpContext();
 
-            var mw = new NotificationChannelMiddleware(nextDelegateMock.Object, new NotificationChannelMiddlewareOptions() { AuthorizationPolicyName = "blah" },
-                new NotificationObservableHost());
+            var mw = new NotificationChannelMiddleware(new NotificationChannelMiddlewareOptions()
+            {
+                AuthorizationPolicyName = "blah"
+            })
+            {
+                Delegate = nextDelegateMock.Object
+            };
 
             await mw.Invoke(testContext);
+
             testContext.Response.StatusCode.Should().Be((int)HttpStatusCode.Forbidden);
         }
 
@@ -155,10 +111,16 @@ namespace Eshopworld.Web.Tests
 
             testContext.Request.Headers.Add("Authentication", new StringValues("Bearer eyJhbGciOiJSUzI1NiIsImtpZCI6IkQwQTM4OTU4RjlEMjFGQkE1RTQ3RDg3N0MxMTA3MkM5Q0MwQzdERUEiLCJ0eXAiOiJKV1QiLCJ4NXQiOiIwS09KV1BuU0g3cGVSOWgzd1JCeXljd01mZW8ifQ.eyJuYmYiOjE1NTE5NTI4NjgsImV4cCI6MTU1MTk1NjQ2OCwiaXNzIjoiaHR0cHM6Ly9zZWN1cml0eS1zdHMuY2kuZXNob3B3b3JsZC5uZXQiLCJhdWQiOlsiaHR0cHM6Ly9zZWN1cml0eS1zdHMuY2kuZXNob3B3b3JsZC5uZXQvcmVzb3VyY2VzIiwic2llcnJhLmFwaSJdLCJjbGllbnRfaWQiOiJlc3cuc2llcnJhLmFwaS50ZXN0LmNsaWVudCIsInNjb3BlIjpbImVzdy5zaWVycmEuYXBpLmFsbCJdfQ.nM7tDRDaA8mhCY6eyOqAFjFvnMTY0u49hFAj8lwsXk6KfbD_SOcVmaw9r90g95B38OAJ2WHS536mZjQjZh6QSWIu2nkLJqyDcInEuS77Yxu0nYOX6x4lmqB5D-XY8J4zBl0BA7KHC1-MSJ6VSNP90RF9903V9eMxIN0c_fV9pgU7Asqq86TiU8a9Szug-0EoW-kkcO_zFUCt-IzOEe-HDzY2kFVrxGZuPIptmOcUKlB_kL8SeSgScQggEefEHV-48zQ3yQPyfVo-8vt4-dgcCHVZ76upYAXJnlDvhuVHCnK30QfirtmU6cDZ2Mq1RfdP1z-quxIrAdEAzU2KoXGYxQ"));
 
-            var mw = new NotificationChannelMiddleware(nextDelegateMock.Object, new NotificationChannelMiddlewareOptions() { AuthorizationPolicyName = "AssertScope" },
-                new NotificationObservableHost());
+            var mw = new NotificationChannelMiddleware(new NotificationChannelMiddlewareOptions()
+            {
+                AuthorizationPolicyName = "AssertScope"
+            })
+            {
+                Delegate = nextDelegateMock.Object
+            };
 
             await mw.Invoke(testContext);
+
             testContext.Response.StatusCode.Should().Be((int)HttpStatusCode.Unauthorized);
         }
 
@@ -213,7 +175,7 @@ namespace Eshopworld.Web.Tests
         }
 
         [Fact, IsLayer1]
-        public async Task UnrecognizedTypeReturnsBadRequest()
+        public async Task TestUnrecognizedTypeReturnsBadRequest()
         {
             var f = new TestApiFactory();
             var cl = f.CreateClient();
@@ -224,7 +186,7 @@ namespace Eshopworld.Web.Tests
             (await response.Content.ReadAsStringAsync()).Should().Be("Type 'blah' cannot be resolved");
         }
 
-        private HttpContext CreateTestHttpContext()
+        private static HttpContext CreateTestHttpContext()
         {
             var ctx = new DefaultHttpContext();
 
@@ -270,14 +232,12 @@ namespace Eshopworld.Web.Tests
             }, certificate, 3600, claims);
         }
 
-        public class TestNotification
+        private class TestNotification : KeyVaultChangedNotification
         {
-            public string TestContent = "blah";
         }
 
-        public class TestNotificationSubType : TestNotification
+        private class TestNotificationSubType : TestNotification
         {
-            public string AdditionalContent = "blah blah";
         }
 
         public class TestStartup
@@ -312,25 +272,30 @@ namespace Eshopworld.Web.Tests
 
                 services.AddLogging();
                 services.Add(new ServiceDescriptor(typeof(IBigBrother), Mock.Of<IBigBrother>()));
-                services.Add(new ServiceDescriptor(typeof(NotificationObservableHost), new NotificationObservableHost()));
+                services.Add(new ServiceDescriptor(typeof(ResetEventTestObserver), new ResetEventTestObserver()));
             }
 
             // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
             public void Configure(IApplicationBuilder app, IHostingEnvironment env)
             {
                 app.UseAuthentication();
+
                 app.UseNotification(new NotificationChannelMiddlewareOptions
-                    { AuthorizationPolicyName = "AssertTestScope" });
+                        {AuthorizationPolicyName = "AssertTestScope"})
+                    .SubscribeNotification<TestNotificationSubType, ResetEventTestObserver>(app,
+                        s => s.ReceiveTestNotificationSubType)
+                    .SubscribeNotification<TestNotification, ResetEventTestObserver>(app,
+                        s => s.ReceiveTestNotification);
 
                 app.UseMvc();
             }
         }
 
-        public class TestApiFactory : WebApplicationFactory<ActorLayerTestMiddlewareTests.TestStartup>
+        private class TestApiFactory : WebApplicationFactory<ActorLayerTestMiddlewareTests.TestStartup>
         {
             protected override IWebHostBuilder CreateWebHostBuilder()
             {
-                return new WebHostBuilder()
+                return new WebHostBuilder()                    
                     .UseStartup<TestStartup>();
             }
 
@@ -339,6 +304,21 @@ namespace Eshopworld.Web.Tests
                 builder.UseContentRoot(".");
 
                 base.ConfigureWebHost(builder);
+            }
+        }
+
+        private class ResetEventTestObserver
+        {
+            internal readonly ManualResetEvent TestNotificationSubTypeResetEvent = new ManualResetEvent(false);
+            internal readonly ManualResetEvent TestNotificationResetEvent = new ManualResetEvent(false);
+
+            internal void ReceiveTestNotificationSubType(TestNotificationSubType @event)
+            {
+                TestNotificationSubTypeResetEvent.Set();
+            }
+            internal void ReceiveTestNotification(TestNotification @event)
+            {
+                TestNotificationResetEvent.Set();
             }
         }
     }

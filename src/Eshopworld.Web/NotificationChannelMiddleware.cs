@@ -1,9 +1,11 @@
 ﻿using System;
 using System.IO;
 using System.Net;
+using System.Reactive.Linq;
+using System.Reactive.Subjects;
 using System.Text;
 using System.Threading.Tasks;
-using Microsoft.AspNetCore.Builder;
+using Eshopworld.Core;
 using Microsoft.AspNetCore.Http;
 using Newtonsoft.Json;
 
@@ -18,6 +20,7 @@ namespace Eshopworld.Web
         /// url route prefix to denote notification channel
         /// note that we are intentionally not hooking up to any /api route e.g. /api/notification
         /// </summary>
+        // ReSharper disable once AutoPropertyCanBeMadeGetOnly.Global
         public string UrlPrefix { get; set; } = "/notification";   
         /// <summary>
         /// name of the authorization policy to apply
@@ -26,53 +29,38 @@ namespace Eshopworld.Web
         /// <summary>
         /// (de)serialization settings to use, null denotes defaults will be applied inline with newtonsoft internal implementation
         /// </summary>
+        // ReSharper disable once UnusedAutoPropertyAccessor.Global
         public JsonSerializerSettings JsonSerializerSettings { get; set; }
-    }
-
-    public static class NotificationChannelMiddlewareExtensions
-    {
-        /// <summary>
-        /// Enables handling of HTTP requests which are directly used to 
-        /// </summary>
-        /// <param name="app">The <see cref="IApplicationBuilder"/> to add the middleware to.</param>
-        /// <param name="options">The middleware's parameters.</param>
-        public static IApplicationBuilder UseNotification(this IApplicationBuilder app,
-            NotificationChannelMiddlewareOptions options)
-        {
-            if (string.IsNullOrWhiteSpace(options.AuthorizationPolicyName))
-            {
-                throw new ArgumentException("The value of the AuthorizationPolicyName property is invalid.", nameof(options));
-            }
-
-            if (string.IsNullOrWhiteSpace(options.UrlPrefix))
-            {
-                throw new ArgumentException("The value of the UrlPrefix property is invalid.", nameof(options));
-            }
-
-
-            return app.UseMiddleware<NotificationChannelMiddleware>(options,
-                app.ApplicationServices.GetService(typeof(NotificationObservableHost)));
-        }
     }
 
     /// <summary>
     /// the notification middleware
-    ///
-    /// this requires an instance of <see cref="NotificationObservableHost"/>, which notification observers hook up to/subscribe for specific events
     /// </summary>
     public class NotificationChannelMiddleware
     {
-        private readonly RequestDelegate _delegate;
+        internal  RequestDelegate Delegate { private get; set; }
         private readonly NotificationChannelMiddlewareOptions _options;
-        private readonly NotificationObservableHost _observable;
+        private readonly Subject<BaseNotification> _subject  = new Subject<BaseNotification>(); 
 
-        public NotificationChannelMiddleware(RequestDelegate @delegate, NotificationChannelMiddlewareOptions options, NotificationObservableHost observable)
-        {
-            _delegate = @delegate;
-            _options = options;
-            _observable = observable;
+        /// <summary>
+        /// the observable entry-point allowing subscribing to notifications of various type
+        /// </summary>
+        public IObservable<BaseNotification> Observable => _subject.AsObservable();
+
+        /// <summary>
+        /// constructor
+        /// </summary>
+        /// <param name="options">options to configure this middleware</param>
+        public NotificationChannelMiddleware(NotificationChannelMiddlewareOptions options)
+        {            
+            _options = options;            
         }
 
+        /// <summary>
+        /// main middleware logic
+        /// </summary>
+        /// <param name="context">http context</param>
+        /// <returns>middleware result</returns>
         public async Task Invoke(HttpContext context)
         {
             if (!await context.PerformSecurityChecks(_options.AuthorizationPolicyName))
@@ -104,14 +92,16 @@ namespace Eshopworld.Web
                     = new StreamReader(context.Request.Body, Encoding.UTF8, true, 1024, true))
                 {
                     var bodyStr = reader.ReadToEnd();
-                    _observable.NewEvent(JsonConvert.DeserializeObject(bodyStr, resolvedNotificationType, _options.JsonSerializerSettings));
+
+                    _subject.OnNext((BaseNotification)JsonConvert.DeserializeObject(bodyStr, resolvedNotificationType,
+                        _options.JsonSerializerSettings));
                 }
 
                 context.Response.StatusCode = (int) HttpStatusCode.OK;
                 return;
             }
 
-            await _delegate.Invoke(context);
+            await Delegate.Invoke(context);
         }
     }
 }

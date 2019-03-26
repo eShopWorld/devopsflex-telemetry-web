@@ -13,12 +13,9 @@
     using System.Threading.Tasks;
     using Core;
     using JetBrains.Annotations;
-    using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
     using Microsoft.ServiceFabric.Actors;
     using Microsoft.ServiceFabric.Actors.Client;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Authorization.Policy;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -53,48 +50,6 @@
         /// name of the authorization (authentication) policy to use 
         /// </summary>
         public string AuthorizationPolicyName { get; set; }
-    }
-
-    /// <summary>
-    /// Extension methods used by <see cref="ActorLayerTestMiddleware"/>.
-    /// </summary>
-    public static class ActorLayerTestMiddlewareExtensions
-    {
-        /// <summary>
-        /// Enables handling of HTTP requests which are directly used to 
-        /// </summary>
-        /// <param name="app">The <see cref="IApplicationBuilder"/> to add the middleware to.</param>
-        /// <param name="options">The middleware's parameters.</param>
-        public static IApplicationBuilder UseActorLayerTestDirectCall(this IApplicationBuilder app, ActorLayerTestMiddlewareOptions options)
-        {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
-            if (options.StatelessServiceContext == null)
-            {
-                throw new ArgumentException("The StatelessServiceContext property must not be null", nameof(options));
-            }
-
-            if (options.PathPrefix.Value == null)
-            {
-                throw new ArgumentException("The PathPrefix property must not be null", nameof(options));
-            }
-
-            if (options.PathPrefix.Value.Length < 2 || options.PathPrefix.Value.EndsWith("/"))
-            {
-                throw new ArgumentException("The value of the PathPrefix property is invalid.", nameof(options));
-            }
-
-            if (string.IsNullOrWhiteSpace(options.AuthorizationPolicyName))
-            {
-                throw new ArgumentException("Authorization policy name must be set",
-                    nameof(options.AuthorizationPolicyName));
-            }
-
-            return app.UseMiddleware<ActorLayerTestMiddleware>(options);
-        }
     }
 
     /// <summary>
