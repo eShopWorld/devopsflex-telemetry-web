@@ -79,11 +79,11 @@ namespace Eshopworld.Web
                 //structurally this is - Namespace.ContainingClass(+NestedClass)(,MyAssembly) - nested class and assembly designation are optional parts
                 
                 Type resolvedNotificationType;
-                if (string.IsNullOrWhiteSpace(remaining.ToString()) || (resolvedNotificationType= Type.GetType(remaining.ToString().TrimStart('/'), false))==null)
+                if (string.IsNullOrWhiteSpace(remaining.ToString()) || (resolvedNotificationType= Type.GetType(remaining.ToString().TrimStart('/'), false))==null || !resolvedNotificationType.IsSubclassOf(typeof(BaseNotification)))
                 {
                     context.Response.StatusCode = (int)HttpStatusCode.BadRequest;
                     context.Response.ContentType = "text/plain";
-                    await context.Response.WriteAsync($"Type '{remaining.ToString().TrimStart('/')}' cannot be resolved");
+                    await context.Response.WriteAsync($"Type '{remaining.ToString().TrimStart('/')}' cannot be resolved or is not subclass of {typeof(BaseNotification).FullName}");
 
                     return;
                 }

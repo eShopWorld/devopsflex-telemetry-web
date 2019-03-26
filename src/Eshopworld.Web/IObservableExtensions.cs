@@ -13,6 +13,8 @@ namespace Eshopworld.Web
     {
         /// <summary>
         /// subscribe to notification
+        ///
+        /// this returns back the core, unfiltered <see cref="BaseNotification"/> observable so that subscriptions can be chained
         /// </summary>
         /// <typeparam name="TNotification">type of notification (derived of <see cref="BaseNotification"/>)</typeparam>
         /// <typeparam name="TService">type of service that consumes the notification</typeparam>
@@ -33,6 +35,8 @@ namespace Eshopworld.Web
 
         /// <summary>
         /// subscribe to notification with <see cref="Action{T}"/> delegate passed in
+        ///
+        /// this returns back the core, unfiltered <see cref="BaseNotification"/> observable so that subscriptions can be chained
         /// </summary>
         /// <typeparam name="TNotification">type of notification (derived of <see cref="BaseNotification"/></typeparam>
         /// <param name="observable">notification observable</param>

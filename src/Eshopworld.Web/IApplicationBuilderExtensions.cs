@@ -49,7 +49,7 @@ namespace Eshopworld.Web
         }
 
         /// <summary>
-        /// Enables handling of HTTP requests which are directly used to 
+        /// Enables handling of HTTP requests which - if notifications - are broadcasted via <see cref="IObservable{T}"/> exposed by this notification middleware
         /// </summary>
         /// <param name="app">The <see cref="IApplicationBuilder"/> to add the middleware to.</param>
         /// <param name="options">The middleware's parameters.</param>

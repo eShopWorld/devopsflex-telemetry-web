@@ -183,7 +183,20 @@ namespace Eshopworld.Web.Tests
 
             var response = await cl.PostAsync("/notification/blah", new StringContent(JsonConvert.SerializeObject(new TestNotificationSubType()), Encoding.UTF8, "application/json"));
             response.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
-            (await response.Content.ReadAsStringAsync()).Should().Be("Type 'blah' cannot be resolved");
+            (await response.Content.ReadAsStringAsync()).Should().Be("Type 'blah' cannot be resolved or is not subclass of Eshopworld.Core.BaseNotification");
+        }
+
+
+        [Fact, IsLayer1]
+        public async Task TestIncorrectTypeReturnsBadRequest()
+        {
+            var f = new TestApiFactory();
+            var cl = f.CreateClient();
+            cl.SetBearerToken(await GetAccessToken());
+
+            var response = await cl.PostAsync("/notification/Eshopworld.Web.Tests.NotificationChannelMiddlewareTests+InvalidNotification,Eshopworld.Web.Tests", new StringContent(JsonConvert.SerializeObject(new TestNotificationSubType()), Encoding.UTF8, "application/json"));
+            response.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+            (await response.Content.ReadAsStringAsync()).Should().Be("Type 'Eshopworld.Web.Tests.NotificationChannelMiddlewareTests+InvalidNotification,Eshopworld.Web.Tests' cannot be resolved or is not subclass of Eshopworld.Core.BaseNotification");
         }
 
         private static HttpContext CreateTestHttpContext()
@@ -232,11 +245,15 @@ namespace Eshopworld.Web.Tests
             }, certificate, 3600, claims);
         }
 
-        private class TestNotification : KeyVaultChangedNotification
+        private class TestNotification : BaseNotification
         {
         }
 
         private class TestNotificationSubType : TestNotification
+        {
+        }
+
+        private class InvalidNotification
         {
         }
 
