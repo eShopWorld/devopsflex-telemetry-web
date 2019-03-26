@@ -13,13 +13,9 @@
     using System.Threading.Tasks;
     using Core;
     using JetBrains.Annotations;
-    using Microsoft.AspNetCore.Builder;
     using Microsoft.AspNetCore.Http;
     using Microsoft.ServiceFabric.Actors;
     using Microsoft.ServiceFabric.Actors.Client;
-    using Microsoft.AspNetCore.Authentication;
-    using Microsoft.AspNetCore.Authorization;
-    using Microsoft.AspNetCore.Authorization.Policy;
     using Newtonsoft.Json;
 
     /// <summary>
@@ -57,48 +53,6 @@
     }
 
     /// <summary>
-    /// Extension methods used by <see cref="ActorLayerTestMiddleware"/>.
-    /// </summary>
-    public static class ActorLayerTestMiddlewareExtensions
-    {
-        /// <summary>
-        /// Enables handling of HTTP requests which are directly used to 
-        /// </summary>
-        /// <param name="app">The <see cref="IApplicationBuilder"/> to add the middleware to.</param>
-        /// <param name="options">The middleware's parameters.</param>
-        public static IApplicationBuilder UseActorLayerTestDirectCall(this IApplicationBuilder app, ActorLayerTestMiddlewareOptions options)
-        {
-            if (options == null)
-            {
-                throw new ArgumentNullException(nameof(options));
-            }
-
-            if (options.StatelessServiceContext == null)
-            {
-                throw new ArgumentException("The StatelessServiceContext property must not be null", nameof(options));
-            }
-
-            if (options.PathPrefix.Value == null)
-            {
-                throw new ArgumentException("The PathPrefix property must not be null", nameof(options));
-            }
-
-            if (options.PathPrefix.Value.Length < 2 || options.PathPrefix.Value.EndsWith("/"))
-            {
-                throw new ArgumentException("The value of the PathPrefix property is invalid.", nameof(options));
-            }
-
-            if (string.IsNullOrWhiteSpace(options.AuthorizationPolicyName))
-            {
-                throw new ArgumentException("Authorization policy name must be set",
-                    nameof(options.AuthorizationPolicyName));
-            }
-
-            return app.UseMiddleware<ActorLayerTestMiddleware>(options);
-        }
-    }
-
-    /// <summary>
     /// The simple middleware which can send a request to a new actor of the specified type.
     /// </summary>
     /// <remarks>
@@ -109,8 +63,6 @@
         private readonly RequestDelegate _next;
         private readonly ActorLayerTestMiddlewareOptions _options;
         private readonly IBigBrother _bigBrother;
-        private readonly IAuthorizationPolicyProvider _policyProvider;
-        private readonly IPolicyEvaluator _policyEvaluator;
         private readonly Lazy<Dictionary<string, ActorMethod>> _actorMethods;
         private readonly DateTime? _activeUntil;
         private bool _isAlive = true;
@@ -120,16 +72,13 @@
         /// </summary>
         /// <param name="next">The next request middleware handler.</param>
         /// <param name="options">The middleware parameters.</param>
-        /// <param name="bigBrother">The telemetry sink.</param>
-        /// <param name="policyEvaluator">asp.net authorization policy evaluator instance - normally set up by MVC pipeline</param>
-        /// <param name="policyProvider">asp.net authorization policy provider instance - normally set up by MVC pipeline</param>
-        public ActorLayerTestMiddleware(RequestDelegate next, ActorLayerTestMiddlewareOptions options, IBigBrother bigBrother, IAuthorizationPolicyProvider policyProvider, IPolicyEvaluator policyEvaluator)
+        /// <param name="bigBrother">The telemetry sink.</param>        
+        public ActorLayerTestMiddleware(RequestDelegate next, ActorLayerTestMiddlewareOptions options, IBigBrother bigBrother)
         {
             _next = next;
             _options = options;
             _bigBrother = bigBrother;
-            _policyProvider = policyProvider;
-            _policyEvaluator = policyEvaluator;
+
             _actorMethods = new Lazy<Dictionary<string, ActorMethod>>(
                 () => CreateActorMethodsDictionary(GetAssemblies(_options.InterfaceAssemblies)));
 
@@ -142,40 +91,11 @@
         /// <param name="context">The HTTP request context</param>
         public async Task Invoke(HttpContext context)
         {
-            //test security
-            var policy = await _policyProvider.GetPolicyAsync(_options.AuthorizationPolicyName);
-            if (policy == null)
+            if (!await context.PerformSecurityChecks(_options.AuthorizationPolicyName))
             {
-                await context.ForbidAsync(); //there is no point in retrying
                 return;
             }
-
-            //authentication checks
-            var authenticationResult = await
-                _policyEvaluator.AuthenticateAsync(policy,
-                    context);
-
-            if (!authenticationResult.Succeeded)
-            {
-                await context.ChallengeAsync();
-                return;
-            }
-
-            //authorization checks
-            var authorizationResult = await _policyEvaluator.AuthorizeAsync(policy, authenticationResult, context, null);
-
-            if (authorizationResult.Challenged)
-            {
-                await context.ChallengeAsync();
-                return;
-            }
-
-            if (authorizationResult.Forbidden)
-            {
-                await context.ForbidAsync();
-                return;
-            }
-
+              
             var isTest = context.Request.Path.StartsWithSegments(
                 _options.PathPrefix,
                 StringComparison.OrdinalIgnoreCase,
