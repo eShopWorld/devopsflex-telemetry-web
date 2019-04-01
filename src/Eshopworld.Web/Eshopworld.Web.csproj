@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>2.1.5</Version>
-    <PackageReleaseNotes>added notification channel middleware</PackageReleaseNotes>
+    <Version>2.1.6</Version>
+    <PackageReleaseNotes>JSON fabric serialization provider added</PackageReleaseNotes>
 
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsPackable>True</IsPackable>
