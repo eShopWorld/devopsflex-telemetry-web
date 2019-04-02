@@ -67,7 +67,6 @@ namespace Eshopworld.Web
                 return null;
             }
             using (var writeStream = new MemoryStream())
-            {
                 using (var jsonWriter = new JsonTextWriter(new StreamWriter(writeStream)))
                 {
                     _serializer.Serialize(jsonWriter, serviceRemotingRequestMessageBody);
@@ -77,19 +76,16 @@ namespace Eshopworld.Web
                     var segments = new List<ArraySegment<byte>> { segment };
                     return new OutgoingMessageBody(segments);
                 }
-            }
         }
 
         public IServiceRemotingRequestMessageBody Deserialize(IIncomingMessageBody messageBody)
         {
             using (var sr = new StreamReader(messageBody.GetReceivedBuffer()))
-            {
                 using (JsonReader reader = new JsonTextReader(sr))
                 {
                     var ob = _serializer.Deserialize<JsonBody>(reader);
                     return ob;
                 }
-            }
         }
     }
 
@@ -115,7 +111,6 @@ namespace Eshopworld.Web
             }
 
             using (var writeStream = new MemoryStream())
-            {
                 using (var jsonWriter = new JsonTextWriter(new StreamWriter(writeStream)))
                 {
                     _serializer.Serialize(jsonWriter, responseMessageBody);
@@ -125,20 +120,17 @@ namespace Eshopworld.Web
                     var segments = new List<ArraySegment<byte>> { segment };
                     return new OutgoingMessageBody(segments);
                 }
-            }
         }
 
         public IServiceRemotingResponseMessageBody Deserialize(IIncomingMessageBody messageBody)
         {
 
             using (var sr = new StreamReader(messageBody.GetReceivedBuffer()))
-            {
                 using (var reader = new JsonTextReader(sr))
                 {
                     var obj = _serializer.Deserialize<JsonBody>(reader);
                     return obj;
                 }
-            }
         }
     }
 
