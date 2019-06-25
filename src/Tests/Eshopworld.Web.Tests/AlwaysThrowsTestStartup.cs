@@ -1,13 +1,13 @@
-﻿namespace Eshopworld.Web.Tests
-{
-    using System;
-    using System.Threading.Tasks;
-    using Core;
-    using Telemetry;
-    using Microsoft.AspNetCore.Builder;
-    using Microsoft.AspNetCore.Hosting;
-    using Microsoft.Extensions.DependencyInjection;
+﻿using System;
+using System.Threading.Tasks;
+using Eshopworld.Core;
+using Eshopworld.Telemetry;
+using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Hosting;
+using Microsoft.Extensions.DependencyInjection;
 
+namespace Eshopworld.Web.Tests
+{
     public class AlwaysThrowsTestStartup
     {
         internal static readonly BigBrother Bb = new BigBrother("", "");
