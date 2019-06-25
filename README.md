@@ -76,3 +76,53 @@ public async Task<IActionResult> CreateAsync([FromBody] BrowserRequest newBrowse
     return Ok();
 }
 ```
+
+### RequestTelemetryInitializer
+
+The RequestTelemetryInitializer allows interception of a request to decorate your AI telemetry.
+As Application Insights doesn't read request bodies, this telemetry initializer can contains functionality to help with reading the request body.
+For example, this is beneficial in establishing correlation for requests where the data is contained within the request body.
+
+To enable this functionality within your application, first create a custom class which will inherit from `Eshopworld.Web.Telemetry.RequestTelemetryInitializer`, and then register its type `services.AddSingleton<ITelemetryInitializer, RequestBodyTelemetryInitializer>();` in `ConfigureServices` in your `Startup.cs`.
+
+#### Examples
+
+In the example below, two routes are monitored, and elements of their bodies are interrogated and sent to AI as part of the Request Telemetry as a custom dimension. This will allow requests to be tracked / queries by the various data.
+This is especially useful in webhook endpoints where there may be no identifiers in the request URI.
+
+``` c#
+internal class RequestBodyTelemetryInitializer : Eshopworld.Web.Telemetry.RequestTelemetryInitializer
+{
+    public RequestBodyTelemetryInitializer([NotNull] IHttpContextAccessor httpContextAccessor, [NotNull] IBigBrother bigBrother) : base(httpContextAccessor, bigBrother) { }
+
+    protected override void HandleIncomingRequest(string path, RequestTelemetry requestTelemetry, HttpRequest request)
+    {
+        switch (path)
+        {
+            case "/api/v1/Foo":
+                requestTelemetry.Properties["FooId"] = ExtractBodyDetail<FooDTO>(request, dto => dto?.Id.ToString());
+                break;
+            
+            case "/api/v1/Bar":
+                requestTelemetry.Properties["BarId"] = ExtractBodyDetail<BarDTO>(request, dto => dto?.Id.ToString());
+                break;
+        }
+    }
+}
+```
+
+All routes are monitored, and the AuthenticatedUserId property is set on the user context within the Request Telemetry, with the value obtained from the *client_id* claim obtained from the user's claim set.
+
+Note, this must currently occur in `HandleCompletedRequest`, as the security context has not been established when `HandleIncomingRequest` is triggered.
+
+``` c#
+internal class SecurityResponseTelemetryInitializer : Eshopworld.Web.Telemetry.RequestTelemetryInitializer
+{
+    public SecurityResponseTelemetryInitializer([NotNull] IHttpContextAccessor httpContextAccessor, [NotNull] IBigBrother bigBrother) : base(httpContextAccessor, bigBrother) { }
+
+    protected override void HandleCompletedRequest(string path, RequestTelemetry requestTelemetry, HttpRequest request)
+    {
+        requestTelemetry.Context.User.AuthenticatedUserId = (httpContextAccessor.HttpContext.User.Identity as System.Security.Claims.ClaimsIdentity)?.Claims?.SingleOrDefault(c => c.Type == "client_id")?.Value;
+    }
+}
+```
