@@ -70,8 +70,9 @@ namespace Eshopworld.Web
         private static bool IsAcceptedStatusCode(HttpStatusCode responseStatusCode)
         {
             //2XX+4XX = Success family + client error family
-            return (responseStatusCode >= HttpStatusCode.OK && responseStatusCode < HttpStatusCode.Ambiguous) || (responseStatusCode >= HttpStatusCode.BadRequest &&
-            responseStatusCode < HttpStatusCode.InternalServerError);
+            return (responseStatusCode >= HttpStatusCode.OK && responseStatusCode < HttpStatusCode.Ambiguous) 
+                   || (responseStatusCode >= HttpStatusCode.BadRequest 
+                       && responseStatusCode < HttpStatusCode.InternalServerError);
         }
 
 
