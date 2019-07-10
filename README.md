@@ -184,6 +184,6 @@ Sample usage follows
     autorestClient.HttpClient.Timeout = TimeSpan.FromMinutes(10);
     autorestClient.SetRetryPolicy(null);
 	
-	var resp = await autorestClient.GetPetByIdWithHttpMessagesAsync(1);
+var resp = await autorestClient.GetPetByIdWithHttpMessagesAsync(1);
 
 ```
