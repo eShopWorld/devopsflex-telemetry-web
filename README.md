@@ -126,3 +126,64 @@ internal class SecurityResponseTelemetryInitializer : Eshopworld.Web.Telemetry.R
     }
 }
 ```
+### Evolution Fallback Polly policy
+
+Custom policy has been developed that is tailored specifically for V2 Evolution deployments. As the service is deployed, it can be routed to via ServiceFabric reverse proxy (if enabled), ELB or FrontDoor. These routes are hierarchical.
+For performance reasons, the closest route is preferred as it is assumed it would be the fastest. If the route however fails, we want to move to higher level and retry as this may succeed. Ultimately the full flow envisioned is Reverse Proxy route-> ELB (Cluster level) -> FrontDoor route. FrontDoor route offers cross-regional failover.
+
+This policy wraps timeout internally to provide meaningful fallback policy. Developer has full control over this timeout via configuration.
+
+Configuration builder allows to 
+ - set # of retries per level
+ - retry timeout
+ - wait time between retries
+
+**Please note** that the policy timeout is per request. HttpClient timeout is an overall timeout across ALL calls. This is inline with Polly implementation - see https://github.com/App-vNext/Polly/wiki/Polly-and-HttpClientFactory#use-case-applying-timeouts. Make sure that overall timeout is sufficient given the timeout set for individual attempt and number of attempts at level.
+
+**Also note** that if this policy is used in the context of autorest client, it is advised to remove the internal transient error handling built into autorest/rest client. This policy handles transient issues along with the fallback behaviour.
+
+``` c#
+
+//switch off default rest client transient error handling
+ autorestClient.SetRetryPolicy(null);
+
+```
+
+This policy can be further combined with additional policies as per Polly design e.g. Circuit breaker.
+
+Sample usage follows
+
+``` c#
+
+  var dns = new DnsLevel
+    {
+        Cluster = "https://cluster_route",
+        Proxy = "https://reverseProxy_route",
+        Global = "https://FrontDoor_route"
+    };
+
+    var configBuilder= new EvoFallbackPollyPolicyConfigurationBuilder();
+    var config = configBuilder
+        .SetRetriesPerLevel(5)
+        .SetRetryTimeOut(TimeSpan.FromSeconds(10))
+        .SetWaitTimeBetweenRetries(TimeSpan.FromMilliseconds(50))
+        .Build();
+
+    var eswRetryPolicy = EvoFallbackPollyPolicyBuilder.EswDnsRetryPolicy(config);
+
+    var circuitBreaker = Policy<HttpResponseMessage>
+        .HandleResult(resp=>!resp.IsSuccessStatusCode)
+        .CircuitBreakerAsync(1, TimeSpan.FromMinutes(1))
+        .WrapAsync(eswRetryPolicy);
+
+    var autorestClient =
+        new SwaggerPetstore(
+            new EvoFallbackPollyPolicyHttpHandler(circuitBreaker, dns)
+            );
+
+    autorestClient.HttpClient.Timeout = TimeSpan.FromMinutes(10);
+    autorestClient.SetRetryPolicy(null);
+	
+var resp = await autorestClient.GetPetByIdWithHttpMessagesAsync(1);
+
+```
