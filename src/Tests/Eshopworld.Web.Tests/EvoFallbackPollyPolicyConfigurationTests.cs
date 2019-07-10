@@ -16,7 +16,7 @@ namespace Eshopworld.Web.Tests
                     RetryTimeOut = TimeSpan.FromMilliseconds(1),
                     WaitTimeBetweenRetries = TimeSpan.FromSeconds(1)
                 }
-                .Validate()
+                .IsValid
                 .Should().BeTrue();
         }
 
@@ -24,7 +24,7 @@ namespace Eshopworld.Web.Tests
         public void ValidateFail()
         {
             new EvoFallbackPollyPolicyConfiguration()
-                .Validate()
+                .IsValid
                 .Should().BeFalse();
         }
     }

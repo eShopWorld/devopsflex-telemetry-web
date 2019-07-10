@@ -14,7 +14,7 @@ namespace Eshopworld.Web
     {
         public static IAsyncPolicy<HttpResponseMessage> EswDnsRetryPolicy(EvoFallbackPollyPolicyConfiguration config)
         {
-            if (!config.Validate())
+            if (!config.IsValid)
             {
                 throw new ArgumentException("Invalid configuration passed", nameof(config));
             }

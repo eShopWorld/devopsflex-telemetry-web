@@ -11,8 +11,8 @@ namespace Eshopworld.Web
         public int RetriesPerLevel { get; set; }
         public TimeSpan RetryTimeOut { get; set; }
 
-        internal bool Validate() =>
-            WaitTimeBetweenRetries != default && RetriesPerLevel != default && RetryTimeOut != default;
+        internal bool IsValid =>
+            WaitTimeBetweenRetries >= TimeSpan.Zero && RetriesPerLevel >0 && RetryTimeOut >=TimeSpan.Zero;
     }
 
     public class EvoFallbackPollyPolicyConfigurationBuilder : IEvoFallbackPollyPolicyConfigurationBuilder
