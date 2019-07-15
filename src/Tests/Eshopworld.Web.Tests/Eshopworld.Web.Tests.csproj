@@ -10,16 +10,16 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="Eshopworld.Core" Version="2.1.1" />
+    <PackageReference Include="Eshopworld.Core" Version="2.1.2" />
     <PackageReference Include="EShopworld.Security.Services.Testing" Version="1.0.3" />
-    <PackageReference Include="Eshopworld.Telemetry" Version="2.1.3" />
-    <PackageReference Include="Eshopworld.Tests.Core" Version="1.0.5" />
+    <PackageReference Include="Eshopworld.Telemetry" Version="2.1.4" />
+    <PackageReference Include="Eshopworld.Tests.Core" Version="1.1.1" />
     <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="2.7.0" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
     <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.2.0" />
     <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.2.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.0.1" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
