@@ -126,3 +126,40 @@ internal class SecurityResponseTelemetryInitializer : Eshopworld.Web.Telemetry.R
     }
 }
 ```
+
+###AutoRest http client injection
+
+The AutoRest clients cannot be directly configured in as typed client out of the box. The constructor of the AutoRest client is not recognized/compatible with constructor matcher of the factory.
+
+We therefore provide the helper to inject it using the factory itself - the factory still takes care of the handler(s) lifecycle and the http client itself is purely a wrapper.
+
+For further information re http client factory, see https://docs.microsoft.com/en-us/dotnet/standard/microservices-architecture/implement-resilient-applications/use-httpclientfactory-to-implement-resilient-http-requests
+
+The helper returns http client builder chain - just like Microsoft extensions - and so the client can be further configured (e.g. with Polly).
+
+Usage
+
+``` c#
+services
+	.AddAutoRestTypedClient<ISwaggerPetstore, SwaggerPetstore>()
+	.AddPolicyHandler(Policy<HttpResponseMessage>
+                .Handle<Exception>()
+                .Retry());
+
+```
+
+To resolve the AutoRest client, depending on your application DI configuration, you should be able to simply use the **interface** and constructor injection e.g.
+
+``` c#
+
+    [Route("api/[controller]")]
+    [ApiController]
+    public class ValuesController : ControllerBase
+    {
+        public ValuesController(ISwaggerPetstore client)
+        {
+            
+        }
+	}
+
+```
