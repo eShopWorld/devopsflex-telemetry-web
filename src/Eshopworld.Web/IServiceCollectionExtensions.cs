@@ -18,7 +18,7 @@ namespace Eshopworld.Web
         /// <typeparam name="TImpl">generated AutoRest client type</typeparam>
         /// <param name="services">extension entry point</param>
         /// <returns><see cref="IHttpClientBuilder"/> so that http client can be further configured</returns>
-        public static IHttpClientBuilder AddAutoRestTypedClient<TInt, TImpl>(this IServiceCollection services)
+        public static IHttpClientBuilder AddAutoRestClient<TInt, TImpl>(this IServiceCollection services)
             where TInt : class
             where TImpl : class, TInt
         {

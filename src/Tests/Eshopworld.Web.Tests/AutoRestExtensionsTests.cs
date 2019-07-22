@@ -29,7 +29,7 @@ namespace Eshopworld.Web.Tests
             public IServiceProvider ConfigureServices(IServiceCollection services)
             {
                 services
-                    .AddAutoRestTypedClient<ISwaggerPetstore, SwaggerPetstore>();
+                    .AddAutoRestClient<ISwaggerPetstore, SwaggerPetstore>();
 
                 return services.BuildServiceProvider();
             }
