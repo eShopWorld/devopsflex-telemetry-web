@@ -141,7 +141,7 @@ Usage
 
 ``` c#
 services
-	.AddAutoRestTypedClient<ISwaggerPetstore, SwaggerPetstore>()
+	.AddAutoRestClient<ISwaggerPetstore, SwaggerPetstore>()
 	.AddPolicyHandler(Policy<HttpResponseMessage>
                 .Handle<Exception>()
                 .Retry());
