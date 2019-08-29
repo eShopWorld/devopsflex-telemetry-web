@@ -1,12 +1,11 @@
 ﻿using System;
 using System.Net.Http;
 using Microsoft.Extensions.DependencyInjection;
-using Microsoft.Extensions.Logging.Abstractions.Internal;
 
 namespace Eshopworld.Web
 {
     /// <summary>
-    /// extension entrypoints for <see cref="IServiceCollection"/>
+    /// extension entry-points for <see cref="IServiceCollection"/>
     /// </summary>
     // ReSharper disable once InconsistentNaming
     public static class IServiceCollectionExtensions
@@ -22,7 +21,7 @@ namespace Eshopworld.Web
             where TInt : class
             where TImpl : class, TInt
         {
-            var name = TypeNameHelper.GetTypeDisplayName(typeof(TInt));
+            var name = typeof(TInt).FullName;
             var builder = new EswDefaultHttpClientBuilder(services, name);
 
             builder.AddTransient<TInt, TImpl>();

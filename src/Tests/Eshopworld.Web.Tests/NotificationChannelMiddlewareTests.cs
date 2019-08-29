@@ -282,6 +282,7 @@ namespace Eshopworld.Web.Tests
 
                 services.AddMvc(options =>
                     {
+                        options.EnableEndpointRouting = false;
                         var policy = ScopePolicy.Create("esw.toolingInt");
                         options.Filters.Add(new AuthorizeFilter(policy));
                     })

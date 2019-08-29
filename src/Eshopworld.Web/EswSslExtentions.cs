@@ -2,7 +2,6 @@
 using System.Collections.Generic;
 using System.Fabric.Description;
 using System.Linq;
-using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using Eshopworld.Core;
 using Eshopworld.DevOps;
@@ -65,7 +64,7 @@ namespace Eshopworld.Web
                 // TODO: this is a simple solution to solve a temporary problem. Only the first endpoint is visible in SF Explorer. Better solutions are too complicated for our case.
                 foreach (var (port, isHttps) in endpoints)
                 {
-                    options.Listen(IPAddress.Any, port, listenOptions =>
+                    options.ListenAnyIP(port, listenOptions =>
                     {
                         if (isHttps)
                         {
@@ -74,7 +73,6 @@ namespace Eshopworld.Web
                                 if (cert == null)
                                     cert = GetCertificate(context.HostingEnvironment.EnvironmentName);
                                 listenOptions.UseHttps(cert);
-                                listenOptions.NoDelay = true;
                             }
                             catch (Exception ex)
                             {

@@ -91,7 +91,7 @@ namespace Eshopworld.Web
                 using (var reader
                     = new StreamReader(context.Request.Body, Encoding.UTF8, true, 1024, true))
                 {
-                    var bodyStr = reader.ReadToEnd();
+                    var bodyStr = await reader.ReadToEndAsync();
 
                     _subject.OnNext((BaseNotification)JsonConvert.DeserializeObject(bodyStr, resolvedNotificationType,
                         _options.JsonSerializerSettings));
