@@ -35,7 +35,7 @@
     <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0-preview8.19405.4" />
     <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="3.4.664" />
     <PackageReference Include="Microsoft.ServiceFabric.AspNetCore.Kestrel" Version="3.4.664" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
+    <PackageReference Include="System.Collections.Immutable" Version="1.6.0-preview8.19405.3" />
     <PackageReference Include="System.Reactive" Version="4.2.0-preview.625" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
