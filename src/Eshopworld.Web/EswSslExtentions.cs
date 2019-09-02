@@ -137,23 +137,16 @@ namespace Eshopworld.Web
 
         private static string GetCertSubjectName(DeploymentEnvironment environment)
         {
-            switch (environment)
+            return environment switch
             {
-                case DeploymentEnvironment.CI:
-                    return "*.ci.eshopworld.net";
-                case DeploymentEnvironment.Sand:
-                    return "*.sandbox.eshopworld.com";
-                case DeploymentEnvironment.Test:
-                    return "*.test.eshopworld.net";
-                case DeploymentEnvironment.Prep:
-                    return "*.preprod.eshopworld.net";
-                case DeploymentEnvironment.Prod:
-                    return "*.production.eshopworld.com";
-                case DeploymentEnvironment.Development:
-                    return "localhost";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(environment), environment, $"The environment {environment} is not recognized");
-            }
+                DeploymentEnvironment.CI => "*.ci.eshopworld.net",
+                DeploymentEnvironment.Sand => "*.sandbox.eshopworld.com",
+                DeploymentEnvironment.Test => "*.test.eshopworld.net",
+                DeploymentEnvironment.Prep => "*.preprod.eshopworld.net",
+                DeploymentEnvironment.Prod => "*.production.eshopworld.com",
+                DeploymentEnvironment.Development => "localhost",
+                _ => throw new ArgumentOutOfRangeException(nameof(environment), environment, $"The environment {environment} is not recognized"),
+            };
         }
 
 

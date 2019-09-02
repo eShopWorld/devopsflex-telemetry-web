@@ -83,10 +83,8 @@ namespace Eshopworld.Web.Telemetry
             request.EnableBuffering();
             try
             {
-                using (var reader = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true))
-                {
-                    return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(reader.ReadToEnd());
-                }
+                using var reader = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true);
+                return Newtonsoft.Json.JsonConvert.DeserializeObject<T>(reader.ReadToEnd());
             }
             finally
             {
