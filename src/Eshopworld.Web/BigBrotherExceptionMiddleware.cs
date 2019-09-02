@@ -1,4 +1,6 @@
-﻿namespace Eshopworld.Web
+﻿#nullable enable
+
+namespace Eshopworld.Web
 {
     using System;
     using System.Linq;

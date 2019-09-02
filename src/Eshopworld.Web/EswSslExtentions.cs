@@ -9,6 +9,8 @@ using Eshopworld.Telemetry;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
 
+#nullable enable
+
 namespace Eshopworld.Web
 {
     public static class EswSslExtentions
@@ -60,7 +62,7 @@ namespace Eshopworld.Web
         {
             return builder.ConfigureKestrel((context, options) =>
             {
-                X509Certificate2 cert = null;
+                X509Certificate2? cert = null;
                 // TODO: this is a simple solution to solve a temporary problem. Only the first endpoint is visible in SF Explorer. Better solutions are too complicated for our case.
                 foreach (var (port, isHttps) in endpoints)
                 {
