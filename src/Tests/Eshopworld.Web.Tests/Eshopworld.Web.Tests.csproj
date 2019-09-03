@@ -9,6 +9,11 @@
     <Platforms>x64</Platforms>
   </PropertyGroup>
 
+  <PropertyGroup>
+    <!-- SonarQube needs this -->
+    <ProjectGuid>{031e6df8-16df-4208-8806-3abeaeb5a8b2}</ProjectGuid>
+  </PropertyGroup>
+
   <ItemGroup>
     <PackageReference Include="Eshopworld.Core" Version="2.1.2" />
     <PackageReference Include="EShopworld.Security.Services.Testing" Version="1.0.3" />
