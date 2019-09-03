@@ -15,6 +15,10 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <PackageReference Include="coverlet.msbuild" Version="2.6.3">
+      <PrivateAssets>all</PrivateAssets>
+      <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
+    </PackageReference>
     <PackageReference Include="Eshopworld.Core" Version="2.1.2" />
     <PackageReference Include="EShopworld.Security.Services.Testing" Version="1.0.3" />
     <PackageReference Include="Eshopworld.Telemetry" Version="2.1.4" />
