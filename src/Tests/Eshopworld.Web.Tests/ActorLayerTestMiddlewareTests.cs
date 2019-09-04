@@ -193,7 +193,7 @@ namespace Eshopworld.Web.Tests
                         var policy = ScopePolicy.Create("esw.toolingInt");
                         options.Filters.Add(new AuthorizeFilter(policy));
                     })
-                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
                 services.AddLogging();
                 services.Add(new ServiceDescriptor(typeof(IBigBrother), Mock.Of<IBigBrother>()));
@@ -201,7 +201,7 @@ namespace Eshopworld.Web.Tests
             }
 
             // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-            public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+            public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
             {
                 app.UseAuthentication();
                 app.UseMiddleware<ActorLayerTestMiddleware>(new ActorLayerTestMiddlewareOptions
