@@ -21,11 +21,6 @@
     <Platform>x64</Platform>
     <Platforms>x64</Platforms>
   </PropertyGroup>
-
-  <PropertyGroup>
-    <!-- SonarQube needs this -->
-    <ProjectGuid>{362561ac-6d1a-4db1-9e2c-a9f49751d8ee}</ProjectGuid>
-  </PropertyGroup>
   
   <ItemGroup>
     <PackageReference Include="Eshopworld.Core" Version="2.1.2" />
@@ -34,13 +29,8 @@
     <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.10.0" />
     <PackageReference Include="Microsoft.Extensions.Configuration.AzureKeyVault" Version="3.0.0-preview8.19405.4" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="3.0.0-preview8.19405.4" />
-    <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="3.0.0-preview8.19405.4" />
-    <PackageReference Include="Microsoft.Extensions.Http" Version="3.0.0-preview8.19405.4" />
-    <PackageReference Include="Microsoft.Extensions.Logging.Abstractions" Version="3.0.0-preview8.19405.4" />
     <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="3.4.664" />
     <PackageReference Include="Microsoft.ServiceFabric.AspNetCore.Kestrel" Version="3.4.664" />
-    <PackageReference Include="System.Collections.Immutable" Version="1.6.0-preview8.19405.3" />
     <PackageReference Include="System.Reactive" Version="4.2.0-preview.625" />
     <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
