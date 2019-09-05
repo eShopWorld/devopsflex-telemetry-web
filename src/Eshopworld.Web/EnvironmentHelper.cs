@@ -2,7 +2,7 @@
 
 namespace Eshopworld.Web
 {
-    public class EnvironmentHelper
+    public static class EnvironmentHelper
     {
         /// <summary>
         /// Determines if you are running in Service Fabric or not

@@ -2,13 +2,14 @@
 using System.Collections.Generic;
 using System.Fabric.Description;
 using System.Linq;
-using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using Eshopworld.Core;
 using Eshopworld.DevOps;
 using Eshopworld.Telemetry;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.ServiceFabric.Services.Communication.AspNetCore;
+
+#nullable enable
 
 namespace Eshopworld.Web
 {
@@ -61,11 +62,11 @@ namespace Eshopworld.Web
         {
             return builder.ConfigureKestrel((context, options) =>
             {
-                X509Certificate2 cert = null;
+                X509Certificate2? cert = null;
                 // TODO: this is a simple solution to solve a temporary problem. Only the first endpoint is visible in SF Explorer. Better solutions are too complicated for our case.
                 foreach (var (port, isHttps) in endpoints)
                 {
-                    options.Listen(IPAddress.Any, port, listenOptions =>
+                    options.ListenAnyIP(port, listenOptions =>
                     {
                         if (isHttps)
                         {
@@ -74,7 +75,6 @@ namespace Eshopworld.Web
                                 if (cert == null)
                                     cert = GetCertificate(context.HostingEnvironment.EnvironmentName);
                                 listenOptions.UseHttps(cert);
-                                listenOptions.NoDelay = true;
                             }
                             catch (Exception ex)
                             {
@@ -139,23 +139,16 @@ namespace Eshopworld.Web
 
         private static string GetCertSubjectName(DeploymentEnvironment environment)
         {
-            switch (environment)
+            return environment switch
             {
-                case DeploymentEnvironment.CI:
-                    return "*.ci.eshopworld.net";
-                case DeploymentEnvironment.Sand:
-                    return "*.sandbox.eshopworld.com";
-                case DeploymentEnvironment.Test:
-                    return "*.test.eshopworld.net";
-                case DeploymentEnvironment.Prep:
-                    return "*.preprod.eshopworld.net";
-                case DeploymentEnvironment.Prod:
-                    return "*.production.eshopworld.com";
-                case DeploymentEnvironment.Development:
-                    return "localhost";
-                default:
-                    throw new ArgumentOutOfRangeException(nameof(environment), environment, $"The environment {environment} is not recognized");
-            }
+                DeploymentEnvironment.CI => "*.ci.eshopworld.net",
+                DeploymentEnvironment.Sand => "*.sandbox.eshopworld.com",
+                DeploymentEnvironment.Test => "*.test.eshopworld.net",
+                DeploymentEnvironment.Prep => "*.preprod.eshopworld.net",
+                DeploymentEnvironment.Prod => "*.production.eshopworld.com",
+                DeploymentEnvironment.Development => "localhost",
+                _ => throw new ArgumentOutOfRangeException(nameof(environment), environment, $"The environment {environment} is not recognized"),
+            };
         }
 
 

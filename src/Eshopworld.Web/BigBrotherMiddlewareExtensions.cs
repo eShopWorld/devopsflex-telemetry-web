@@ -1,8 +1,10 @@
-﻿namespace Eshopworld.Web
-{
-    using Core;
-    using Microsoft.AspNetCore.Builder;
+﻿using Eshopworld.Core;
+using Microsoft.AspNetCore.Builder;
 
+#nullable enable
+
+namespace Eshopworld.Web
+{
     /// <summary>
     /// Contains the Use type middleware methods to register the <see cref="IBigBrother"/> exception handler.
     /// </summary>

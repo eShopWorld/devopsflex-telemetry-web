@@ -5,6 +5,8 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Authorization.Policy;
 using Microsoft.AspNetCore.Http;
 
+#nullable enable
+
 namespace Eshopworld.Web
 {
     /// <summary>
@@ -19,16 +21,16 @@ namespace Eshopworld.Web
         /// <param name="policyName">policy to run check against</param>
         /// <returns>true if succeeded, otherwise false (sets http response)</returns>
         public static async Task<bool> PerformSecurityChecks(this HttpContext ctx,
-             string policyName)
+             string? policyName)
         {
-            var policyEvaluator = (IPolicyEvaluator) ctx.RequestServices.GetService(typeof(IPolicyEvaluator));
+            var policyEvaluator = (IPolicyEvaluator)ctx.RequestServices.GetService(typeof(IPolicyEvaluator));
 
             if (policyEvaluator == null)
             {
                 throw new InvalidOperationException($"Unable to obtain {typeof(IPolicyEvaluator)} from the container");
             }
 
-            var policyProvider = (IAuthorizationPolicyProvider) ctx.RequestServices.GetService(typeof(IAuthorizationPolicyProvider));
+            var policyProvider = (IAuthorizationPolicyProvider)ctx.RequestServices.GetService(typeof(IAuthorizationPolicyProvider));
 
             if (policyProvider == null)
             {
@@ -73,7 +75,6 @@ namespace Eshopworld.Web
 
             await ctx.ForbidAsync();
             return false;
-
         }
     }
 }

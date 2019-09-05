@@ -66,26 +66,22 @@ namespace Eshopworld.Web
             {
                 return null;
             }
-            using (var writeStream = new MemoryStream())
-                using (var jsonWriter = new JsonTextWriter(new StreamWriter(writeStream)))
-                {
-                    _serializer.Serialize(jsonWriter, serviceRemotingRequestMessageBody);
-                    jsonWriter.Flush();
-                    var bytes = writeStream.ToArray();
-                    var segment = new ArraySegment<byte>(bytes);
-                    var segments = new List<ArraySegment<byte>> { segment };
-                    return new OutgoingMessageBody(segments);
-                }
+            
+            using var writeStream = new MemoryStream();
+            using var jsonWriter = new JsonTextWriter(new StreamWriter(writeStream));
+            _serializer.Serialize(jsonWriter, serviceRemotingRequestMessageBody);
+            jsonWriter.Flush();
+            var bytes = writeStream.ToArray();
+            var segment = new ArraySegment<byte>(bytes);
+            var segments = new List<ArraySegment<byte>> { segment };
+            return new OutgoingMessageBody(segments);
         }
 
         public IServiceRemotingRequestMessageBody Deserialize(IIncomingMessageBody messageBody)
         {
-            using (var sr = new StreamReader(messageBody.GetReceivedBuffer()))
-                using (JsonReader reader = new JsonTextReader(sr))
-                {
-                    var ob = _serializer.Deserialize<JsonBody>(reader);
-                    return ob;
-                }
+            using var sr = new StreamReader(messageBody.GetReceivedBuffer());
+            using JsonReader reader = new JsonTextReader(sr);
+            return _serializer.Deserialize<JsonBody>(reader);
         }
     }
 
@@ -110,27 +106,22 @@ namespace Eshopworld.Web
                 return null;
             }
 
-            using (var writeStream = new MemoryStream())
-                using (var jsonWriter = new JsonTextWriter(new StreamWriter(writeStream)))
-                {
-                    _serializer.Serialize(jsonWriter, responseMessageBody);
-                    jsonWriter.Flush();
-                    var bytes = writeStream.ToArray();
-                    var segment = new ArraySegment<byte>(bytes);
-                    var segments = new List<ArraySegment<byte>> { segment };
-                    return new OutgoingMessageBody(segments);
-                }
+            using var writeStream = new MemoryStream();
+            using var jsonWriter = new JsonTextWriter(new StreamWriter(writeStream));
+            _serializer.Serialize(jsonWriter, responseMessageBody);
+            jsonWriter.Flush();
+            var bytes = writeStream.ToArray();
+            var segment = new ArraySegment<byte>(bytes);
+            var segments = new List<ArraySegment<byte>> { segment };
+            return new OutgoingMessageBody(segments);
         }
 
         public IServiceRemotingResponseMessageBody Deserialize(IIncomingMessageBody messageBody)
         {
 
-            using (var sr = new StreamReader(messageBody.GetReceivedBuffer()))
-                using (var reader = new JsonTextReader(sr))
-                {
-                    var obj = _serializer.Deserialize<JsonBody>(reader);
-                    return obj;
-                }
+            using var sr = new StreamReader(messageBody.GetReceivedBuffer());
+            using var reader = new JsonTextReader(sr);
+            return _serializer.Deserialize<JsonBody>(reader);
         }
     }
 

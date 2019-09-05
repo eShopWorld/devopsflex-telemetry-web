@@ -76,7 +76,7 @@ namespace Eshopworld.Web.Tests
         {
             var token = await GetAccessToken(true);
 
-            var f = new TestApiFactory();
+            using var f = new TestApiFactory();
             var cl = f.CreateClient();
             cl.SetBearerToken(token);
 
@@ -89,7 +89,7 @@ namespace Eshopworld.Web.Tests
         {
             var token = await GetAccessToken();
 
-            var f = new TestApiFactory();
+            using var f = new TestApiFactory();
             var cl = f.CreateClient();
             cl.SetBearerToken(token);
 
@@ -100,7 +100,7 @@ namespace Eshopworld.Web.Tests
         [Fact, IsLayer1]
         public async Task TestForbidFlowExpiredToken()
         {                        
-            var f = new TestApiFactory();
+            using var f = new TestApiFactory();
             var cl = f.CreateClient();
             cl.SetBearerToken("eyJhbGciOiJodHRwOi8vd3d3LnczLm9yZy8yMDAxLzA0L3htbGRzaWctbW9yZSNyc2Etc2hhMjU2Iiwia2lkIjoiRDBBMzg5NThGOUQyMUZCQTVFNDdEODc3QzExMDcyQzlDQzBDN0RFQSIsInR5cCI6IkpXVCJ9.eyJuYmYiOjE1NTE5ODI4MTAsImV4cCI6MTU1MTk4NjQxMCwiaXNzIjoiaHR0cHM6Ly9zZWN1cml0eS1zdHMuY2kuZXNob3B3b3JsZC5uZXQiLCJhdWQiOlsiaHR0cHM6Ly9zZWN1cml0eS1zdHMuY2kuZXNob3B3b3JsZC5uZXQvcmVzb3VyY2VzIiwiZXN3LnRvb2xpbmdJbnRUZXN0Il0sImNsaWVudF9pZCI6ImVzdy50b29saW5nSW50VGVzdENsaWVudCIsInN1YiI6ImJsYWgiLCJpZHAiOiJvaWRjLWF6dXJlIiwiU2NvcGUiOlsib3BlbmlkIiwicHJvZmlsZSIsImVzdy50b29saW5nSW50VGVzdCJdLCJhbXIiOlsiZXh0ZXJuYWwiXX0.L31m8k-jDlJdFgEU0XQ26aPZ5iQ0_hEYJIyyfQ36JDsGCGngcyy2eBAXt7GY4IUNuO8MWGvXpYSkn5iMsHIQBQ8o7wUV4mqXaeP2w3QFOx9cbKsqIMW6tFDlSu23oQIFP50zRxb9LEQBHrb_CYA6VfZD8ilW2A59nKjtus9SQsukJCzYYjOwgmzty7DTzwRXUfe7ox0RLseD2FIavN6AY47YSGpgZv5arXzN5yqE3RQfSMkfQcGUJZtVhXMUk_1ZelTIwPrwIMPdM74fi8uEjVY3m9bhRV8F8NaPPr1QoRyYTGxeR2yV-CfgiqaLKdg3VoQp8KOQIDzNYOYpWcaVzQ");
 
@@ -189,10 +189,11 @@ namespace Eshopworld.Web.Tests
 
                 services.AddMvc(options =>
                     {
+                        options.EnableEndpointRouting = false;
                         var policy = ScopePolicy.Create("esw.toolingInt");
                         options.Filters.Add(new AuthorizeFilter(policy));
                     })
-                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
                 services.AddLogging();
                 services.Add(new ServiceDescriptor(typeof(IBigBrother), Mock.Of<IBigBrother>()));
@@ -200,7 +201,7 @@ namespace Eshopworld.Web.Tests
             }
 
             // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-            public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+            public void Configure(IApplicationBuilder app)
             {
                 app.UseAuthentication();
                 app.UseMiddleware<ActorLayerTestMiddleware>(new ActorLayerTestMiddlewareOptions
