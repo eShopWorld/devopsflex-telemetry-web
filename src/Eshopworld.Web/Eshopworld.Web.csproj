@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>2.2.1</Version>
+    <Version>2.2.2</Version>
     <PackageReleaseNotes>add  autorest http client factory extensions</PackageReleaseNotes>
 
     <TargetFramework>netstandard2.0</TargetFramework>
@@ -24,7 +24,7 @@
 
   <ItemGroup>
     <PackageReference Include="Eshopworld.Core" Version="2.1.2" />
-    <PackageReference Include="Eshopworld.DevOps" Version="4.1.0" />
+    <PackageReference Include="Eshopworld.DevOps" Version="4.2.0" />
     <PackageReference Include="Eshopworld.Telemetry" Version="2.1.4" />
     <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.10.0" />
@@ -34,8 +34,8 @@
     <PackageReference Include="Microsoft.Extensions.Configuration.EnvironmentVariables" Version="2.2.4" />
     <PackageReference Include="Microsoft.Extensions.Configuration.Json" Version="2.2.0" />
     <PackageReference Include="Microsoft.Extensions.Http" Version="2.2.0" />
-    <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="3.4.641" />
-    <PackageReference Include="Microsoft.ServiceFabric.AspNetCore.Kestrel" Version="3.4.641" />
+    <PackageReference Include="Microsoft.ServiceFabric.Actors" Version="3.4.664" />
+    <PackageReference Include="Microsoft.ServiceFabric.AspNetCore.Kestrel" Version="3.4.664" />
     <PackageReference Include="System.Collections.Immutable" Version="1.5.0" />
     <PackageReference Include="System.Reactive" Version="4.2.0-preview.102" />
   </ItemGroup>
