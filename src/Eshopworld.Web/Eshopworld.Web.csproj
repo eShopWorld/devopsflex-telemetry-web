@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>2.2.2</Version>
-    <PackageReleaseNotes>add  autorest http client factory extensions</PackageReleaseNotes>
+    <Version>2.3.2</Version>
+    <PackageReleaseNotes>Allow override for the default HttpStatusCode of BigBrotherExceptionMiddleware</PackageReleaseNotes>
 
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsPackable>True</IsPackable>
