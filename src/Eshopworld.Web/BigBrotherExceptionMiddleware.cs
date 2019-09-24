@@ -15,20 +15,24 @@
     {
         internal readonly RequestDelegate Next;
         internal readonly IBigBrother Bb;
+        private readonly HttpStatusCode _responseHttpStatusCodeOnException;
 
         /// <summary>
         /// Initializes a new instance of <see cref="BigBrotherExceptionMiddleware"/>.
         /// </summary>
         /// <param name="next">The next <see cref="RequestDelegate"/> in the pipeline.</param>
         /// <param name="bigBrother">The <see cref="IBigBrother"/> that we want to stream exception telemetry to.</param>
-        public BigBrotherExceptionMiddleware(RequestDelegate next, IBigBrother bigBrother)
+        /// <param name="responseHttpStatusCodeOnException">The <see cref="HttpStatusCode"/> we want to return in the response when handling an exception.</param>
+        public BigBrotherExceptionMiddleware(RequestDelegate next, IBigBrother bigBrother, HttpStatusCode responseHttpStatusCodeOnException = HttpStatusCode.ServiceUnavailable)
         {
+
             Next = next;
 #if DEBUG
             Bb = bigBrother ?? throw new ArgumentNullException(nameof(bigBrother), $"{nameof(IBigBrother)} isn't registred as a service.");
 #else
             Bb = bigBrother;
 #endif
+            _responseHttpStatusCodeOnException = responseHttpStatusCodeOnException;
         }
 
         /// <summary>
@@ -97,7 +101,7 @@
 #endif
                     });
 
-                context.Response.StatusCode = (int)HttpStatusCode.ServiceUnavailable;
+                context.Response.StatusCode = (int)_responseHttpStatusCodeOnException;
             }
 
             Bb.Publish(exception.ToExceptionEvent());
