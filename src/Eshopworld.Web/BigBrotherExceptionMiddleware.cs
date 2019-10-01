@@ -23,7 +23,7 @@
         /// <param name="next">The next <see cref="RequestDelegate"/> in the pipeline.</param>
         /// <param name="bigBrother">The <see cref="IBigBrother"/> that we want to stream exception telemetry to.</param>
         /// <param name="responseHttpStatusCodeOnException">The <see cref="HttpStatusCode"/> we want to return in the response when handling an exception.</param>
-        public BigBrotherExceptionMiddleware(RequestDelegate next, IBigBrother bigBrother, HttpStatusCode responseHttpStatusCodeOnException = HttpStatusCode.ServiceUnavailable)
+        public BigBrotherExceptionMiddleware(RequestDelegate next, IBigBrother bigBrother, HttpStatusCode responseHttpStatusCodeOnException = HttpStatusCode.InternalServerError)
         {
 
             Next = next;

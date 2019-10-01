@@ -37,7 +37,7 @@ namespace Eshopworld.Web.Tests
         }
 
         [Fact, IsLayer0]
-        public async Task Default_HttpStatusCode_On_Exception_Is_ServiceUnavailable()
+        public async Task Default_HttpStatusCode_On_Exception_Is_InternalServerError()
         {
             var middleware = new BigBrotherExceptionMiddleware(context => throw new Exception(), Mock.Of<IBigBrother>());
             var httpContext = new DefaultHttpContext();
@@ -46,13 +46,13 @@ namespace Eshopworld.Web.Tests
             await middleware.Invoke(httpContext);
 
 
-            httpContext.Response.StatusCode.Should().Be((int)HttpStatusCode.ServiceUnavailable);
+            httpContext.Response.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
         }
 
         [Fact, IsLayer0]
         public async Task HttpStatusCode_On_Exception_Is_The_One_Passed_On_Ctor()
         {
-            var statusCode = HttpStatusCode.InternalServerError;
+            var statusCode = HttpStatusCode.ServiceUnavailable;
 
             var middleware = new BigBrotherExceptionMiddleware(context => throw new Exception(), Mock.Of<IBigBrother>(), statusCode);
             var httpContext = new DefaultHttpContext();

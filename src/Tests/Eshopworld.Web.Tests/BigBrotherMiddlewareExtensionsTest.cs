@@ -58,9 +58,21 @@ namespace Eshopworld.Web.Tests
         }
 
         [Fact, IsLayer1]
+        public async Task Test_Overriden_MiddleWare_Returns_ServiceUnavailable()
+        {
+            var client = new TestServer(new WebHostBuilder().UseStartup<AlwaysThrowsTestStartupWithServiceUnavailableErrorStatusCode>()).CreateClient();
+            
+
+            var response = await client.GetAsync("/");
+
+
+            response.StatusCode.Should().Be(HttpStatusCode.ServiceUnavailable);
+        }
+        
+        [Fact, IsLayer1]
         public async Task Test_MiddleWare_Returns_InternalServerError()
         {
-            var client = new TestServer(new WebHostBuilder().UseStartup<AlwaysThrowsTestStartupWithInternalServerErrorStatusCode>()).CreateClient();
+            var client = new TestServer(new WebHostBuilder().UseStartup<AlwaysThrowsTestStartup>()).CreateClient();
             
 
             var response = await client.GetAsync("/");

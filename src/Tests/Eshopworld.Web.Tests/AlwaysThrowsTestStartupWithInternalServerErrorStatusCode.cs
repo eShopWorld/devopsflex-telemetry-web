@@ -11,11 +11,11 @@ using Microsoft.Extensions.DependencyInjection;
 
 namespace Eshopworld.Web.Tests
 {
-    public class AlwaysThrowsTestStartupWithInternalServerErrorStatusCode
+    public class AlwaysThrowsTestStartupWithServiceUnavailableErrorStatusCode
     {
         internal static readonly BigBrother Bb = new BigBrother("", "");
 
-        public AlwaysThrowsTestStartupWithInternalServerErrorStatusCode(IHostingEnvironment env)
+        public AlwaysThrowsTestStartupWithServiceUnavailableErrorStatusCode(IHostingEnvironment env)
         {
         }
 
@@ -27,7 +27,7 @@ namespace Eshopworld.Web.Tests
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.UseBigBrotherExceptionHandler(HttpStatusCode.InternalServerError);
+            app.UseBigBrotherExceptionHandler(HttpStatusCode.ServiceUnavailable);
 
             app.Run(async ctx =>
                         {
