@@ -1,4 +1,6 @@
-﻿namespace Eshopworld.Web.Tests
+﻿using System.Net;
+
+namespace Eshopworld.Web.Tests
 {
     using System;
     using System.Threading.Tasks;
@@ -53,6 +55,30 @@
                 await client.GetAsync("/");
                 blewUp.Should().BeTrue();
             }
+        }
+
+        [Fact, IsLayer1]
+        public async Task Test_Overriden_MiddleWare_Returns_ServiceUnavailable()
+        {
+            var client = new TestServer(new WebHostBuilder().UseStartup<AlwaysThrowsTestStartupWithServiceUnavailableErrorStatusCode>()).CreateClient();
+            
+
+            var response = await client.GetAsync("/");
+
+
+            response.StatusCode.Should().Be(HttpStatusCode.ServiceUnavailable);
+        }
+        
+        [Fact, IsLayer1]
+        public async Task Test_MiddleWare_Returns_InternalServerError()
+        {
+            var client = new TestServer(new WebHostBuilder().UseStartup<AlwaysThrowsTestStartup>()).CreateClient();
+            
+
+            var response = await client.GetAsync("/");
+
+
+            response.StatusCode.Should().Be(HttpStatusCode.InternalServerError);
         }
     }
 }

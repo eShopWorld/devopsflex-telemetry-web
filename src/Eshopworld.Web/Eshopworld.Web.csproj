@@ -1,8 +1,11 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>2.2.2</Version>
-    <PackageReleaseNotes>add  autorest http client factory extensions</PackageReleaseNotes>
+    <Version>3.0.0</Version>
+    <PackageReleaseNotes>
+      Change the default HttpStatusCode of BigBrotherExceptionMiddleware to 500.
+      Allow override for the default HttpStatusCode of BigBrotherExceptionMiddleware.
+    </PackageReleaseNotes>
 
     <TargetFramework>netstandard2.0</TargetFramework>
     <IsPackable>True</IsPackable>

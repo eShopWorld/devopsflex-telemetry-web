@@ -1,4 +1,9 @@
-﻿namespace Eshopworld.Web.Tests
+﻿using System.Net;
+
+using Microsoft.AspNetCore.Http.Features;
+using Microsoft.AspNetCore.Http.Internal;
+
+namespace Eshopworld.Web.Tests
 {
     using System;
     using FluentAssertions;
@@ -31,13 +36,43 @@
             blewUp.Should().BeTrue();
         }
 
+        [Fact, IsLayer0]
+        public async Task Default_HttpStatusCode_On_Exception_Is_InternalServerError()
+        {
+            var middleware = new BigBrotherExceptionMiddleware(context => throw new Exception(), Mock.Of<IBigBrother>());
+            var httpContext = new DefaultHttpContext();
+            
+            
+            await middleware.Invoke(httpContext);
+
+
+            httpContext.Response.StatusCode.Should().Be((int)HttpStatusCode.InternalServerError);
+        }
+
+        [Fact, IsLayer0]
+        public async Task HttpStatusCode_On_Exception_Is_The_One_Passed_On_Ctor()
+        {
+            var statusCode = HttpStatusCode.ServiceUnavailable;
+
+            var middleware = new BigBrotherExceptionMiddleware(context => throw new Exception(), Mock.Of<IBigBrother>(), statusCode);
+            var httpContext = new DefaultHttpContext();
+            
+            
+            await middleware.Invoke(httpContext);
+
+
+            httpContext.Response.StatusCode.Should().Be((int)statusCode);
+        }
+
+
+
         public class Invoke
         {
             [Fact, IsLayer0]
             public async Task Test_ExceptionsAreHandled()
             {
                 var mockMiddleware = new Mock<BigBrotherExceptionMiddleware>(MockBehavior.Loose,
-                    new RequestDelegate(_ => throw new Exception("KABUM")), new Mock<IBigBrother>().Object);
+                    new RequestDelegate(_ => throw new Exception("KABUM")), new Mock<IBigBrother>().Object, null);
                 mockMiddleware.Setup(x => x.Invoke(It.IsAny<HttpContext>())).CallBase();
                 mockMiddleware.Setup(x => x.HandleException(It.IsAny<HttpContext>(), It.IsAny<Exception>()))
                     .Returns(Task.CompletedTask);

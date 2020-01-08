@@ -1,18 +1,21 @@
 ﻿using System;
+using System.Net;
 using System.Threading.Tasks;
+
 using Eshopworld.Core;
 using Eshopworld.Telemetry;
+
 using Microsoft.AspNetCore.Builder;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.Extensions.DependencyInjection;
 
 namespace Eshopworld.Web.Tests
 {
-    public class AlwaysThrowsTestStartup
+    public class AlwaysThrowsTestStartupWithServiceUnavailableErrorStatusCode
     {
         internal static readonly BigBrother Bb = new BigBrother("", "");
 
-        public AlwaysThrowsTestStartup(IHostingEnvironment env)
+        public AlwaysThrowsTestStartupWithServiceUnavailableErrorStatusCode(IHostingEnvironment env)
         {
         }
 
@@ -24,7 +27,7 @@ namespace Eshopworld.Web.Tests
 
         public void Configure(IApplicationBuilder app, IHostingEnvironment env)
         {
-            app.UseBigBrotherExceptionHandler();
+            app.UseBigBrotherExceptionHandler(HttpStatusCode.ServiceUnavailable);
 
             app.Run(async ctx =>
                         {
