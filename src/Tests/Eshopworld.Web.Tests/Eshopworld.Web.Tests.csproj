@@ -1,7 +1,7 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netcoreapp2.2</TargetFramework>
+    <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsPackable>false</IsPackable>
     <DebugType>Full</DebugType>
     <SonarQubeTestProject>true</SonarQubeTestProject>
@@ -10,20 +10,18 @@
   </PropertyGroup>
 
   <ItemGroup>
-    <PackageReference Include="coverlet.msbuild" Version="2.6.3">
+    <PackageReference Include="coverlet.msbuild" Version="2.8.0">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>
     </PackageReference>
-    <PackageReference Include="Eshopworld.Core" Version="2.1.2" />
+    <PackageReference Include="Eshopworld.Core" Version="4.0.0" />
     <PackageReference Include="EShopworld.Security.Services.Testing" Version="1.0.3" />
-    <PackageReference Include="Eshopworld.Telemetry" Version="2.1.4" />
+    <PackageReference Include="Eshopworld.Telemetry" Version="3.1.0-preview1" />
     <PackageReference Include="Eshopworld.Tests.Core" Version="1.1.1" />
-    <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="2.7.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Core" Version="2.2.5" />
-    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="2.2.0" />
-    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="2.2.0" />
-    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.2.0" />
+    <PackageReference Include="IdentityServer4.AccessTokenValidation" Version="3.0.1" />
+    <PackageReference Include="Microsoft.AspNetCore.Mvc.Testing" Version="3.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.TestHost" Version="3.1.2" />
+    <PackageReference Include="Microsoft.NET.Test.Sdk" Version="16.5.0" />
     <PackageReference Include="xunit.runner.visualstudio" Version="2.4.1">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers</IncludeAssets>
@@ -32,6 +30,10 @@
 
   <ItemGroup>
     <ProjectReference Include="..\..\Eshopworld.Web\Eshopworld.Web.csproj" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <FrameworkReference Include="Microsoft.AspNetCore.App" />
   </ItemGroup>
 
   <ItemGroup>

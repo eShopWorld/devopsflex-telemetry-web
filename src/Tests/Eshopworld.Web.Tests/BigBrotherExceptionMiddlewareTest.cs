@@ -1,11 +1,7 @@
-﻿using System.Net;
-
-using Microsoft.AspNetCore.Http.Features;
-using Microsoft.AspNetCore.Http.Internal;
-
-namespace Eshopworld.Web.Tests
+﻿namespace Eshopworld.Web.Tests
 {
     using System;
+    using System.Net;
     using FluentAssertions;
     using Eshopworld.Tests.Core;
     using Microsoft.AspNetCore.Http;

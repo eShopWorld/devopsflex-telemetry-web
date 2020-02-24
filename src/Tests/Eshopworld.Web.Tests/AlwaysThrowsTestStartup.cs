@@ -12,7 +12,7 @@ namespace Eshopworld.Web.Tests
     {
         internal static readonly BigBrother Bb = new BigBrother("", "");
 
-        public AlwaysThrowsTestStartup(IHostingEnvironment env)
+        public AlwaysThrowsTestStartup(IWebHostEnvironment env)
         {
         }
 
@@ -22,7 +22,7 @@ namespace Eshopworld.Web.Tests
             return services.BuildServiceProvider();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseBigBrotherExceptionHandler();
 
