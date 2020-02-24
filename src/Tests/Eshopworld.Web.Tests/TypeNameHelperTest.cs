@@ -13,7 +13,7 @@ namespace Eshopworld.Web.Tests
     /// </remarks>
     public class TypeNameHelperTest
     {
-        [Theory, IsUnit]
+        [Theory, IsLayer0]
         // Predefined Types
         [InlineData(typeof(int), "int")]
         [InlineData(typeof(List<int>), "System.Collections.Generic.List<int>")]
@@ -51,7 +51,7 @@ namespace Eshopworld.Web.Tests
             Assert.Equal(expected, TypeNameHelper.GetTypeDisplayName(type));
         }
 
-        [Fact, IsUnit]
+        [Fact, IsLayer0]
         public void DoesNotPrintNamespace_ForGenericTypes_IfNullOrEmpty()
         {
             // Arrange
@@ -61,7 +61,7 @@ namespace Eshopworld.Web.Tests
             Assert.Equal("ClassInGlobalNamespace<int>", TypeNameHelper.GetTypeDisplayName(type));
         }
 
-        [Theory, IsUnit]
+        [Theory, IsLayer0]
         // Predefined Types
         [InlineData(typeof(int), "int")]
         [InlineData(typeof(List<int>), "List<int>")]
@@ -86,7 +86,7 @@ namespace Eshopworld.Web.Tests
             Assert.Equal(expected, TypeNameHelper.GetTypeDisplayName(type, false));
         }
 
-        [Theory, IsUnit]
+        [Theory, IsLayer0]
         [InlineData(typeof(void), "void")]
         [InlineData(typeof(bool), "bool")]
         [InlineData(typeof(byte), "byte")]
@@ -108,7 +108,7 @@ namespace Eshopworld.Web.Tests
             Assert.Equal(expected, TypeNameHelper.GetTypeDisplayName(type));
         }
 
-        [Theory, IsUnit]
+        [Theory, IsLayer0]
         [InlineData(typeof(int[]), true, "int[]")]
         [InlineData(typeof(string[][]), true, "string[][]")]
         [InlineData(typeof(int[,]), true, "int[,]")]
@@ -173,7 +173,7 @@ namespace Eshopworld.Web.Tests
             };
         }
 
-        [Theory, IsUnit]
+        [Theory, IsLayer0]
         [MemberData(nameof(GetOpenGenericsTestData))]
         public void Can_pretty_print_open_generics(Type type, bool fullName, string expected)
         {
@@ -189,7 +189,7 @@ namespace Eshopworld.Web.Tests
                 {  typeof(Level1<>.Level2<>),"Eshopworld.Web.Tests.TypeNameHelperTest+Level1<T1>+Level2<T2>" },
             };
 
-        [Theory, IsUnit]
+        [Theory, IsLayer0]
         [MemberData(nameof(GetTypeDisplayName_IncludesGenericParameterNamesWhenOptionIsSetData))]
         public void GetTypeDisplayName_IncludesGenericParameterNamesWhenOptionIsSet(Type type, string expected)
         {
@@ -209,7 +209,7 @@ namespace Eshopworld.Web.Tests
                 {  typeof(Level1<>.Level2<>),"Level2<T2>" },
             };
 
-        [Theory, IsUnit]
+        [Theory, IsLayer0]
         [MemberData(nameof(GetTypeDisplayName_WithoutFullName_IncludesGenericParameterNamesWhenOptionIsSetData))]
         public void GetTypeDisplayName_WithoutFullName_IncludesGenericParameterNamesWhenOptionIsSet(Type type, string expected)
         {
@@ -250,7 +250,7 @@ namespace Eshopworld.Web.Tests
             }
         }
 
-        [Theory, IsUnit]
+        [Theory, IsLayer0]
         [MemberData(nameof(FullTypeNameData))]
         public void Can_PrettyPrint_FullTypeName_WithoutGenericParametersAndNestedTypeDelimiter(Type type, string expectedTypeName)
         {
