@@ -74,7 +74,6 @@ namespace Eshopworld.Web
                                 if (cert == null)
                                     cert = GetCertificate(context.HostingEnvironment.EnvironmentName);
                                 listenOptions.UseHttps(cert);
-                                listenOptions.NoDelay = true;
                             }
                             catch (Exception ex)
                             {

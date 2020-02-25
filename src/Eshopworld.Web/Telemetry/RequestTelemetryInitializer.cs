@@ -7,7 +7,6 @@ using Microsoft.ApplicationInsights.Channel;
 using Microsoft.ApplicationInsights.DataContracts;
 using Microsoft.ApplicationInsights.Extensibility;
 using Microsoft.AspNetCore.Http;
-using Microsoft.AspNetCore.Http.Internal;
 
 namespace Eshopworld.Web.Telemetry
 {
@@ -81,7 +80,8 @@ namespace Eshopworld.Web.Telemetry
         /// <remarks>Calling this method converts the request body to a rewindable stream. The method will first read the body from the stream, process it via the selector, and then rewind the stream for downstream handling</remarks>
         protected static T DeserializeRequestBody<T>(HttpRequest request)
         {
-            request.EnableRewind();
+            // EnableBuffering is the equivalent of EnableRewind in asp.net core 3.1
+            request.EnableBuffering();
             try
             {
                 using (var reader = new StreamReader(request.Body, Encoding.UTF8, true, 1024, true))

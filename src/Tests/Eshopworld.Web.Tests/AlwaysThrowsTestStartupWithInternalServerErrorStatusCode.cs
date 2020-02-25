@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Net;
 using System.Threading.Tasks;
 
@@ -15,7 +15,7 @@ namespace Eshopworld.Web.Tests
     {
         internal static readonly BigBrother Bb = new BigBrother("", "");
 
-        public AlwaysThrowsTestStartupWithServiceUnavailableErrorStatusCode(IHostingEnvironment env)
+        public AlwaysThrowsTestStartupWithServiceUnavailableErrorStatusCode(IWebHostEnvironment env)
         {
         }
 
@@ -25,7 +25,7 @@ namespace Eshopworld.Web.Tests
             return services.BuildServiceProvider();
         }
 
-        public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+        public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
         {
             app.UseBigBrotherExceptionHandler(HttpStatusCode.ServiceUnavailable);
 

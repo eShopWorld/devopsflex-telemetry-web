@@ -10,6 +10,7 @@ using Eshopworld.DevOps;
 using Eshopworld.Tests.Core;
 using EShopworld.Security.Services.Testing.Token;
 using FluentAssertions;
+using IdentityModel.Client;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Builder;
@@ -20,6 +21,7 @@ using Microsoft.AspNetCore.Mvc.Authorization;
 using Microsoft.AspNetCore.Mvc.Testing;
 using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
+using Microsoft.Extensions.Hosting;
 using Microsoft.Extensions.Primitives;
 using Moq;
 using Xunit;
@@ -187,41 +189,46 @@ namespace Eshopworld.Web.Tests
                         x.Authority = "https://security-sts.ci.eshopworld.net";                       
                     });
 
-                services.AddMvc(options =>
+                services.AddControllers(options =>
                     {
                         var policy = ScopePolicy.Create("esw.toolingInt");
                         options.Filters.Add(new AuthorizeFilter(policy));
                     })
-                    .SetCompatibilityVersion(CompatibilityVersion.Version_2_2);
+                    .SetCompatibilityVersion(CompatibilityVersion.Version_3_0);
 
                 services.AddLogging();
                 services.Add(new ServiceDescriptor(typeof(IBigBrother), Mock.Of<IBigBrother>()));
-
             }
 
             // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
-            public void Configure(IApplicationBuilder app, IHostingEnvironment env)
+            public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
             {
+                app.UseRouting();
+
                 app.UseAuthentication();
+                app.UseAuthorization();
+                
                 app.UseMiddleware<ActorLayerTestMiddleware>(new ActorLayerTestMiddlewareOptions
                     {AuthorizationPolicyName = "AssertTestScope"});
 
-                app.UseMvc();
+                app.UseEndpoints(endpoints => {
+                    endpoints.MapControllers();
+                });
             }
         }
 
         public class TestApiFactory : WebApplicationFactory<TestStartup>
         {
-            protected override IWebHostBuilder CreateWebHostBuilder()
+            protected override IHostBuilder CreateHostBuilder()
             {
-                return new WebHostBuilder()
-                    .UseStartup<TestStartup>();
+                return Host
+                    .CreateDefaultBuilder()
+                    .ConfigureWebHostDefaults(webBuilder => webBuilder.UseStartup<TestStartup>());
             }
 
             protected override void ConfigureWebHost(IWebHostBuilder builder)
             {
                 builder.UseContentRoot(".");
-                
                 base.ConfigureWebHost(builder);
             }
         }    
