@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>4.0.1-preview1</Version>
+    <Version>4.0.1</Version>
     <PackageReleaseNotes>
       Downgrade of Microsoft.Extensions.Configuration.AzureKeyVault
     </PackageReleaseNotes>
@@ -9,6 +9,7 @@
     <TargetFramework>netcoreapp3.1</TargetFramework>
     <IsPackable>True</IsPackable>
     <PackageId>Eshopworld.Web</PackageId>
+    <PackageIcon>icon.png</PackageIcon>
     <Title>Eshopworld.Web</Title>
     <Authors>David Rodrigues, Oisin Haken, David Guerin</Authors>
     <Copyright>Copyright eShopWorld 2019</Copyright>
@@ -25,8 +26,12 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <None Include="icon.png" Pack="true" PackagePath=""/>
+  </ItemGroup>
+  
+  <ItemGroup>
     <PackageReference Include="Eshopworld.Core" Version="4.0.0" />
-    <PackageReference Include="Eshopworld.DevOps" Version="5.0.1-preview1" />
+    <PackageReference Include="Eshopworld.DevOps" Version="5.0.1" />
     <PackageReference Include="Eshopworld.Telemetry" Version="3.1.1" />
     <PackageReference Include="JetBrains.Annotations" Version="2019.1.3" />
     <PackageReference Include="Microsoft.ApplicationInsights" Version="2.13.1" />
