@@ -65,7 +65,7 @@ namespace Eshopworld.Web
                 // TODO: this is a simple solution to solve a temporary problem. Only the first endpoint is visible in SF Explorer. Better solutions are too complicated for our case.
                 foreach (var (port, isHttps) in endpoints)
                 {
-                    options.Listen(IPAddress.Any, port, listenOptions =>
+                    options.Listen(IPAddress.IPv6Any, port, listenOptions =>
                     {
                         if (isHttps)
                         {
