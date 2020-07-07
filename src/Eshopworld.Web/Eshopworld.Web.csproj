@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>4.1.0</Version>
+    <Version>4.1.1</Version>
     <PackageReleaseNotes>
-      Update to support SSL certificate binding in Kestrel for the Service Fabric Reverse Proxy. 
+      Update useESWSSL interface to use optional ipv6 binding 
     </PackageReleaseNotes>
 
     <TargetFramework>netcoreapp3.1</TargetFramework>
