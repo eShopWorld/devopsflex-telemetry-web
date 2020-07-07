@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>4.0.1</Version>
+    <Version>4.1.0</Version>
     <PackageReleaseNotes>
-      Downgrade of Microsoft.Extensions.Configuration.AzureKeyVault
+      Update to support SSL certificate binding in Kestrel for the Service Fabric Reverse Proxy. 
     </PackageReleaseNotes>
 
     <TargetFramework>netcoreapp3.1</TargetFramework>

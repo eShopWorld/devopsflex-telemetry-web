@@ -56,8 +56,9 @@ namespace Eshopworld.Web
         /// </summary>
         /// <param name="builder">The web host builder.</param>
         /// <param name="endpoints">The enumeration of endpoints each defined by the port number and handled protocol type.</param>
+        /// <param name="enableIpv6Binding">Switch to enable IPV6 binding - which is needed for the Service Fabric Proxy and Kestrel SSL binding to the app</param>
         /// <returns>The web builder.</returns>
-        public static IWebHostBuilder UseEswSsl(this IWebHostBuilder builder, IEnumerable<(int port, bool isHttps)> endpoints)
+        public static IWebHostBuilder UseEswSsl(this IWebHostBuilder builder, IEnumerable<(int port, bool isHttps)> endpoints, bool enableIpv6Binding = false)
         {
             return builder.ConfigureKestrel((context, options) =>
             {
@@ -65,7 +66,7 @@ namespace Eshopworld.Web
                 // TODO: this is a simple solution to solve a temporary problem. Only the first endpoint is visible in SF Explorer. Better solutions are too complicated for our case.
                 foreach (var (port, isHttps) in endpoints)
                 {
-                    options.Listen(IPAddress.Any, port, listenOptions =>
+                    options.Listen(enableIpv6Binding ? IPAddress.IPv6Any : IPAddress.Any, port, listenOptions =>
                     {
                         if (isHttps)
                         {
