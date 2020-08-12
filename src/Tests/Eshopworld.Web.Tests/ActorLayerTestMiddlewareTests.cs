@@ -76,7 +76,7 @@ namespace Eshopworld.Web.Tests
         [Fact, IsLayer1]
         public async Task TestForbidFlowValidToken()
         {
-            var token = await GetAccessToken(true);
+            var token = GetAccessToken(true);
 
             var f = new TestApiFactory();
             var cl = f.CreateClient();
@@ -89,7 +89,7 @@ namespace Eshopworld.Web.Tests
         [Fact, IsLayer1]
         public async Task TestForbidFlowValidTokenWithoutRealApiClaim()
         {
-            var token = await GetAccessToken();
+            var token = GetAccessToken();
 
             var f = new TestApiFactory();
             var cl = f.CreateClient();
@@ -110,13 +110,12 @@ namespace Eshopworld.Web.Tests
             response.StatusCode.Should().Be((int)HttpStatusCode.Unauthorized);
         }
 
-        private async Task<string> GetAccessToken(bool includeRealApiClaim = false)
+        private string GetAccessToken(bool includeRealApiClaim = false)
         {
             var config = EswDevOpsSdk.BuildConfiguration();
 
             var generator = new TokenGenerator();            
 
-            var certificate = new X509Certificate2(Convert.FromBase64String(config["STSSigningCert"]), "");
             var issuer = config["STSIssuer"];
 
             var claims = new List<Claim>
@@ -136,11 +135,11 @@ namespace Eshopworld.Web.Tests
                 claims.Add(new Claim("Scope", "esw.toolingInt"));
             }
 
-            return await generator.CreateAccessTokenAsync($"{issuer}", new List<string>
+            return generator.CreateAccessToken($"{issuer}", new List<string>
             {
                 $"{issuer}/resources",
                 "esw.toolingIntTest"
-            }, certificate, 3600, claims);
+            }, claims, 3600);
         }
 
         private HttpContext CreateTestHttpContext()

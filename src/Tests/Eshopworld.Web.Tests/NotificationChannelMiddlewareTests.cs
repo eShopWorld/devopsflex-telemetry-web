@@ -38,7 +38,7 @@ namespace Eshopworld.Web.Tests
         [Fact, IsLayer1]
         public async Task TestNotificationFlow()
         {
-            var token = await GetAccessToken();
+            var token = GetAccessToken();
 
             var f = new TestApiFactory();
             var cl = f.CreateClient();
@@ -57,7 +57,7 @@ namespace Eshopworld.Web.Tests
         [Fact, IsLayer1]
         public async Task TestNotificationFlowDifferentMessages()
         {
-            var token = await GetAccessToken();
+            var token = GetAccessToken();
 
             var f = new TestApiFactory();
             var cl = f.CreateClient();
@@ -132,7 +132,7 @@ namespace Eshopworld.Web.Tests
         [Fact, IsLayer1]
         public async Task TestForbidFlowValidToken()
         {
-            var token = await GetAccessToken(true);
+            var token = GetAccessToken(true);
 
             var f = new TestApiFactory();
             var cl = f.CreateClient();
@@ -145,7 +145,7 @@ namespace Eshopworld.Web.Tests
         [Fact, IsLayer1]
         public async Task TestForbidFlowValidTokenRealController()
         {
-            var token = await GetAccessToken(true);
+            var token = GetAccessToken(true);
 
             var f = new TestApiFactory();
             var cl = f.CreateClient();
@@ -158,7 +158,7 @@ namespace Eshopworld.Web.Tests
         [Fact, IsLayer1]
         public async Task TestForbidFlowValidTokenWithoutRealApiClaim()
         {
-            var token = await GetAccessToken();
+            var token = GetAccessToken();
 
             var f = new TestApiFactory();
             var cl = f.CreateClient();
@@ -184,7 +184,7 @@ namespace Eshopworld.Web.Tests
         {
             var f = new TestApiFactory();
             var cl = f.CreateClient();
-            cl.SetBearerToken(await GetAccessToken());
+            cl.SetBearerToken(GetAccessToken());
 
             var response = await cl.PostAsync("/notification/blah", new StringContent(JsonConvert.SerializeObject(new TestNotificationSubType()), Encoding.UTF8, "application/json"));
             response.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
@@ -197,7 +197,7 @@ namespace Eshopworld.Web.Tests
         {
             var f = new TestApiFactory();
             var cl = f.CreateClient();
-            cl.SetBearerToken(await GetAccessToken());
+            cl.SetBearerToken(GetAccessToken());
 
             var response = await cl.PostAsync("/notification/Eshopworld.Web.Tests.NotificationChannelMiddlewareTests+InvalidNotification,Eshopworld.Web.Tests", new StringContent(JsonConvert.SerializeObject(new TestNotificationSubType()), Encoding.UTF8, "application/json"));
             response.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
@@ -217,13 +217,12 @@ namespace Eshopworld.Web.Tests
             return ctx;
         }
 
-        private async Task<string> GetAccessToken(bool includeRealApiClaim = false)
+        private string GetAccessToken(bool includeRealApiClaim = false)
         {
             var config = EswDevOpsSdk.BuildConfiguration();
 
             var generator = new TokenGenerator();
 
-            var certificate = new X509Certificate2(Convert.FromBase64String(config["STSSigningCert"]), "");
             var issuer = config["STSIssuer"];
 
             var claims = new List<Claim>
@@ -243,11 +242,11 @@ namespace Eshopworld.Web.Tests
                 claims.Add(new Claim("Scope", "esw.toolingInt"));
             }
 
-            return await generator.CreateAccessTokenAsync($"{issuer}", new List<string>
+            return generator.CreateAccessToken($"{issuer}", new List<string>
             {
                 $"{issuer}/resources",
                 "esw.toolingIntTest"
-            }, certificate, 3600, claims);
+            }, claims, 3600);
         }
 
         private class TestNotification : BaseNotification
