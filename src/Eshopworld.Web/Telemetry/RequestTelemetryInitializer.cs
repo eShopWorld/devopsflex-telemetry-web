@@ -21,7 +21,7 @@ namespace Eshopworld.Web.Telemetry
         /// <summary>Default ctor</summary>
         /// <param name="httpContextAccessor">HttpContextAccessor to resolve the http request</param>
         /// <param name="bigBrother">BigBrother used for logging</param>
-        public RequestTelemetryInitializer([NotNull] IHttpContextAccessor httpContextAccessor, [NotNull] IBigBrother bigBrother)
+        public RequestTelemetryInitializer([JetBrains.Annotations.NotNull] IHttpContextAccessor httpContextAccessor, [JetBrains.Annotations.NotNull] IBigBrother bigBrother)
         {
             _httpContextAccessor = httpContextAccessor ?? throw new ArgumentNullException(nameof(httpContextAccessor));
             _bigBrother = bigBrother ?? throw new ArgumentNullException(nameof(bigBrother));
