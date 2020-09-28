@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Text;
 using Eshopworld.Core;
@@ -11,6 +12,7 @@ using Microsoft.AspNetCore.Http;
 namespace Eshopworld.Web.Telemetry
 {
     /// <summary>Allows interception of AI RequestTelemetry events and exposes request body</summary>
+    [ExcludeFromCodeCoverage]
     public class RequestTelemetryInitializer : ITelemetryInitializer
     {
         private readonly IHttpContextAccessor _httpContextAccessor;
