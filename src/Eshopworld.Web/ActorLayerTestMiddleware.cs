@@ -1,4 +1,6 @@
-﻿namespace Eshopworld.Web
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Eshopworld.Web
 {
     using System;
     using System.Collections.Generic;
@@ -21,6 +23,8 @@
     /// <summary>
     /// The parameters required by <see cref="ActorLayerTestMiddleware"/>;
     /// </summary>
+    /// <remarks>Excluded from code coverage as the search on ADO shows no usage by the clients.</remarks>
+    [ExcludeFromCodeCoverage]
     public class ActorLayerTestMiddlewareOptions
     {
         /// <summary>
@@ -58,6 +62,8 @@
     /// <remarks>
     /// By design only actors with a specific interface schema are supported.
     /// </remarks>
+    /// <remarks>Excluded from code coverage as the search on ADO shows no usage by the clients.</remarks>
+    [ExcludeFromCodeCoverage]
     public class ActorLayerTestMiddleware
     {
         private readonly RequestDelegate _next;
