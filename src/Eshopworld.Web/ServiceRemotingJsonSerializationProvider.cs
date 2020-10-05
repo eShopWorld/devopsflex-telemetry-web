@@ -1,4 +1,4 @@
-﻿using Microsoft.ServiceFabric.Services.Remoting.V2;
+using Microsoft.ServiceFabric.Services.Remoting.V2;
 using Microsoft.ServiceFabric.Services.Remoting.V2.Messaging;
 using Newtonsoft.Json;
 using System;
@@ -137,6 +137,7 @@ namespace Eshopworld.Web
     }
 
     /// wrapped JSON message - both request and response
+    [ExcludeFromCodeCoverage]
     internal class JsonBody : WrappedMessage, IServiceRemotingRequestMessageBody, IServiceRemotingResponseMessageBody
     {
         public JsonBody(object wrapped)
