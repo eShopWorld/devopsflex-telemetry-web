@@ -3,6 +3,7 @@ using Microsoft.ServiceFabric.Services.Remoting.V2.Messaging;
 using Newtonsoft.Json;
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.IO;
 using System.Linq;
 using Newtonsoft.Json.Serialization;
@@ -32,6 +33,7 @@ namespace Eshopworld.Web
     }
 
     /// <inheritdoc />
+    [ExcludeFromCodeCoverage]
     internal class JsonMessageFactory : IServiceRemotingMessageBodyFactory
     {
 
