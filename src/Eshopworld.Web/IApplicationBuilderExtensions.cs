@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using Eshopworld.Core;
 using Microsoft.AspNetCore.Builder;
 
@@ -17,6 +18,8 @@ namespace Eshopworld.Web
         /// </summary>
         /// <param name="app">The <see cref="IApplicationBuilder"/> to add the middleware to.</param>
         /// <param name="options">The middleware's parameters.</param>
+        /// <remarks>Excluded from code coverage as the search on ADO shows no usage by the clients.</remarks>
+        [ExcludeFromCodeCoverage]
         public static IApplicationBuilder UseActorLayerTestDirectCall(this IApplicationBuilder app, ActorLayerTestMiddlewareOptions options)
         {
             if (options == null)
@@ -53,6 +56,8 @@ namespace Eshopworld.Web
         /// </summary>
         /// <param name="app">The <see cref="IApplicationBuilder"/> to add the middleware to.</param>
         /// <param name="options">The middleware's parameters.</param>
+        /// <remarks>Excluded from code coverage as the search on ADO shows no usage by the clients.</remarks>
+        [ExcludeFromCodeCoverage]
         public static IObservable<BaseNotification> UseNotification(this IApplicationBuilder app,
             NotificationChannelMiddlewareOptions options)
         {
