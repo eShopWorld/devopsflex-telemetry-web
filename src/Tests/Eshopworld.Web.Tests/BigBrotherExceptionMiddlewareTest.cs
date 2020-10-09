@@ -1,4 +1,7 @@
-﻿namespace Eshopworld.Web.Tests
+﻿using System.IO;
+using System.Linq.Expressions;
+
+namespace Eshopworld.Web.Tests
 {
     using System;
     using System.Net;
@@ -46,6 +49,28 @@
         }
 
         [Fact, IsLayer0]
+        public async Task On_AggregateException_InnermostException_IsProcessed()
+        {
+            var middleware = new BigBrotherExceptionMiddleware(context => throw new AggregateException(
+                new BadRequestException()), Mock.Of<IBigBrother>());
+            var httpContext = new DefaultHttpContext();
+            await middleware.Invoke(httpContext);
+
+            httpContext.Response.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+        }
+
+        [Fact, IsLayer0]
+        public async Task Default_HttpStatusCode_On_BadRequestException_Is_BadRequestError()
+        {
+            var middleware = new BigBrotherExceptionMiddleware(context => throw new BadRequestException(), Mock.Of<IBigBrother>());
+            var httpContext = new DefaultHttpContext();
+
+            await middleware.Invoke(httpContext);
+            
+            httpContext.Response.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
+        }
+
+        [Fact, IsLayer0]
         public async Task HttpStatusCode_On_Exception_Is_The_One_Passed_On_Ctor()
         {
             var statusCode = HttpStatusCode.ServiceUnavailable;
@@ -59,8 +84,6 @@
 
             httpContext.Response.StatusCode.Should().Be((int)statusCode);
         }
-
-
 
         public class Invoke
         {
