@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>4.1.3</Version>
+    <Version>4.1.4</Version>
     <PackageReleaseNotes>
-      Upgrade of dependency packages.
+      Remove unused RequestTelemetryInitializer.
     </PackageReleaseNotes>
 
     <TargetFramework>netcoreapp3.1</TargetFramework>
