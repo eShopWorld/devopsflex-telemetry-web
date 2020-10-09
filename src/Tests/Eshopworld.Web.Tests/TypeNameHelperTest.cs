@@ -18,8 +18,10 @@ namespace Eshopworld.Web.Tests
         [InlineData(typeof(int), "int")]
         [InlineData(typeof(List<int>), "System.Collections.Generic.List<int>")]
         [InlineData(typeof(Dictionary<int, string>), "System.Collections.Generic.Dictionary<int, string>")]
-        [InlineData(typeof(Dictionary<int, List<string>>), "System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<string>>")]
-        [InlineData(typeof(List<List<string>>), "System.Collections.Generic.List<System.Collections.Generic.List<string>>")]
+        [InlineData(typeof(Dictionary<int, List<string>>),
+            "System.Collections.Generic.Dictionary<int, System.Collections.Generic.List<string>>")]
+        [InlineData(typeof(List<List<string>>),
+            "System.Collections.Generic.List<System.Collections.Generic.List<string>>")]
         // Classes inside NonGeneric class
         [InlineData(typeof(A),
             "Eshopworld.Web.Tests.TypeNameHelperTest+A")]
@@ -80,7 +82,8 @@ namespace Eshopworld.Web.Tests
         [InlineData(typeof(Outer<int>.F<int, string>), "F<int, string>")]
         [InlineData(typeof(Outer<int>.F<int, Outer<int>.E<string>>), "F<int, E<string>>")]
         [InlineData(typeof(Outer<int>.E<Outer<int>.E<string>>), "E<E<string>>")]
-        [InlineData(typeof(OuterGeneric<int>.InnerNonGeneric.InnerGeneric<int, string>.InnerGenericLeafNode<bool>), "InnerGenericLeafNode<bool>")]
+        [InlineData(typeof(OuterGeneric<int>.InnerNonGeneric.InnerGeneric<int, string>.InnerGenericLeafNode<bool>),
+            "InnerGenericLeafNode<bool>")]
         public void Can_pretty_print_CLR_name(Type type, string expected)
         {
             Assert.Equal(expected, TypeNameHelper.GetTypeDisplayName(type, false));
@@ -104,6 +107,32 @@ namespace Eshopworld.Web.Tests
         [InlineData(typeof(ulong), "ulong")]
         [InlineData(typeof(ushort), "ushort")]
         public void Returns_common_name_for_built_in_types(Type type, string expected)
+        {
+            Assert.Equal(expected, TypeNameHelper.GetTypeDisplayName(type));
+        }
+
+        public static readonly IEnumerable<object[]> CommonNameForBuiltInTypesTestData = new List<object[]>
+        {
+            new object[] {true, "bool"},
+            new object[] {(byte) 0x12, "byte"},
+            new object[] {'A', "char"},
+            new object[] {123M, "decimal"},
+            new object[] {123d, "double"},
+            new object[] {123f, "float"},
+            new object[] {123, "int"},
+            new object[] {123L, "long"},
+            new object[] {new object(), "object"},
+            new object[] {(sbyte)123, "sbyte"},
+            new object[] {(short)123, "short"},
+            new object[] {"123", "string"},
+            new object[] {(uint)123, "uint"},
+            new object[] {(ulong)123, "ulong"},
+            new object[] {(ushort)123, "ushort"}
+        };
+
+        [Theory, IsLayer0]
+        [MemberData(nameof(CommonNameForBuiltInTypesTestData))]
+        public void Returns_common_name_for_built_in_types_by_object(object type, string expected)
         {
             Assert.Equal(expected, TypeNameHelper.GetTypeDisplayName(type));
         }
