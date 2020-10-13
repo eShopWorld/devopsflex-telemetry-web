@@ -1,4 +1,6 @@
-﻿namespace Eshopworld.Web.Tests
+﻿using System;
+
+namespace Eshopworld.Web.Tests
 {
     using System.IO;
     using System.Linq;
@@ -71,6 +73,32 @@
                 var threwBadRequest = false;
                 var ms = new ModelStateDictionary();
                 ms.AddModelError(errorKey, errorMsg);
+
+                try
+                {
+                    ms.ThrowIfInvalid();
+                }
+                catch (BadRequestException e)
+                {
+                    threwBadRequest = true;
+                    e.Parameters.Should().HaveCount(1);
+                    e.Parameters.FirstOrDefault().Key.Should().Be(errorKey);
+                    e.Parameters.FirstOrDefault().Value.Should().Be(errorMsg);
+                }
+
+                threwBadRequest.Should().BeTrue();
+            }
+
+            [Fact, IsLayer0]
+            public void Test_ModelState_With1Exception()
+            {
+                const string errorKey = "my error key";
+                const string errorMsg = "my error message";
+
+                var threwBadRequest = false;
+                var ms = new ModelStateDictionary();
+                var metadata = new EmptyModelMetadataProvider().GetMetadataForType(typeof(object));
+                ms.AddModelError(errorKey, new Exception(errorMsg), metadata);
 
                 try
                 {
