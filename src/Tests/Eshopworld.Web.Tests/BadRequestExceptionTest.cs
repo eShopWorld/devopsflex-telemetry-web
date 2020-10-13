@@ -1,4 +1,6 @@
-﻿namespace Eshopworld.Web.Tests
+﻿using System;
+
+namespace Eshopworld.Web.Tests
 {
     using System.IO;
     using System.Linq;
@@ -42,21 +44,14 @@
             public void Test_Throws_WithDoubleParamPocoFailure()
             {
                 var foo = new TestRequest();
-                var blewUp = false;
-
-                try
-                {
+                Action throwIfNullOrWhitespace = () =>
                     BadRequestThrowIf.NullOrWhiteSpace(() => foo.Param1, () => foo.Param2);
-                }
-                catch (BadRequestException e)
-                {
-                    blewUp = true;
-                    e.Parameters.Should().HaveCount(2);
-                    e.Parameters.Should().ContainKey($"{nameof(TestRequest)}.{nameof(TestRequest.Param1)}");
-                    e.Parameters.Should().ContainKey($"{nameof(TestRequest)}.{nameof(TestRequest.Param2)}");
-                }
 
-                blewUp.Should().BeTrue();
+                throwIfNullOrWhitespace.Should().Throw<BadRequestException>()
+                    .And.Parameters.Should().HaveCount(2)
+                    .And.ContainKey($"{nameof(TestRequest)}.{nameof(TestRequest.Param1)}")
+                    .And.ContainKey($"{nameof(TestRequest)}.{nameof(TestRequest.Param2)}");
+
             }
         }
 
@@ -68,23 +63,31 @@
                 const string errorKey = "my error key";
                 const string errorMsg = "my error message";
 
-                var threwBadRequest = false;
                 var ms = new ModelStateDictionary();
                 ms.AddModelError(errorKey, errorMsg);
 
-                try
-                {
-                    ms.ThrowIfInvalid();
-                }
-                catch (BadRequestException e)
-                {
-                    threwBadRequest = true;
-                    e.Parameters.Should().HaveCount(1);
-                    e.Parameters.FirstOrDefault().Key.Should().Be(errorKey);
-                    e.Parameters.FirstOrDefault().Value.Should().Be(errorMsg);
-                }
+                Action throwIfInvalid = () => ms.ThrowIfInvalid();
 
-                threwBadRequest.Should().BeTrue();
+                throwIfInvalid.Should().Throw<BadRequestException>()
+                    .And.Parameters.Should().HaveCount(1)
+                    .And.Contain(errorKey, errorMsg);
+            }
+
+            [Fact, IsLayer0]
+            public void Test_ModelState_With1Exception()
+            {
+                const string errorKey = "my error key";
+                const string errorMsg = "my error message";
+
+                var ms = new ModelStateDictionary();
+                var metadata = new EmptyModelMetadataProvider().GetMetadataForType(typeof(object));
+                ms.AddModelError(errorKey, new Exception(errorMsg), metadata);
+
+                Action throwIfInvalid = () => ms.ThrowIfInvalid();
+
+                throwIfInvalid.Should().Throw<BadRequestException>()
+                    .And.Parameters.Should().HaveCount(1)
+                    .And.Contain(errorKey, errorMsg);
             }
         }
 
@@ -115,7 +118,6 @@
     public class TestRequest
     {
         public string Param1 { get; set; }
-
         public string Param2 { get; set; }
     }
 }

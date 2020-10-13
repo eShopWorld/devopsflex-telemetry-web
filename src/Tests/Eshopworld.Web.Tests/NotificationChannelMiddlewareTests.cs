@@ -203,7 +203,6 @@ namespace Eshopworld.Web.Tests
             response.StatusCode.Should().Be((int)HttpStatusCode.BadRequest);
             (await response.Content.ReadAsStringAsync()).Should().Be("Type 'Eshopworld.Web.Tests.NotificationChannelMiddlewareTests+InvalidNotification,Eshopworld.Web.Tests' cannot be resolved or is not subclass of Eshopworld.Core.BaseNotification");
         }
-
         private static HttpContext CreateTestHttpContext()
         {
             var ctx = new DefaultHttpContext();
