@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>4.1.4</Version>
+    <Version>4.1.5</Version>
     <PackageReleaseNotes>
       Remove unused RequestTelemetryInitializer.
     </PackageReleaseNotes>
