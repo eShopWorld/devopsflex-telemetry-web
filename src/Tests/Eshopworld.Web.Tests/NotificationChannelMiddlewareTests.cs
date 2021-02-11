@@ -43,7 +43,7 @@ namespace Eshopworld.Web.Tests
             var f = new TestApiFactory();
             var cl = f.CreateClient();
 
-            var observable = (ResetEventTestObserver)f.Services.GetService(typeof(ResetEventTestObserver));           
+            var observable = (ResetEventTestObserver)f.Services.GetService(typeof(ResetEventTestObserver));
 
             cl.SetBearerToken(token);
 
@@ -69,7 +69,7 @@ namespace Eshopworld.Web.Tests
             var response = await cl.PostAsync("/notification/Eshopworld.Web.Tests.NotificationChannelMiddlewareTests+TestNotification,Eshopworld.Web.Tests", new StringContent(JsonConvert.SerializeObject(new TestNotificationSubType()), Encoding.UTF8, "application/json"));
 
             response.IsSuccessStatusCode.Should().BeTrue();
-           
+
             observable.TestNotificationResetEvent.WaitOne(TimeSpan.FromSeconds(1)).Should().BeTrue();
             observable.TestNotificationSubTypeResetEvent.WaitOne(TimeSpan.FromSeconds(1)).Should().BeFalse();
         }
@@ -263,7 +263,7 @@ namespace Eshopworld.Web.Tests
 
         public class TestStartup
         {
-            
+
             // This method gets called by the runtime. Use this method to add services to the container.
             public void ConfigureServices(IServiceCollection services)
             {
@@ -300,18 +300,19 @@ namespace Eshopworld.Web.Tests
             public void Configure(IApplicationBuilder app, IWebHostEnvironment env)
             {
                 app.UseRouting();
-                
+
                 app.UseAuthentication();
                 app.UseAuthorization();
 
                 app.UseNotification(new NotificationChannelMiddlewareOptions
-                        {AuthorizationPolicyName = "AssertTestScope"})
+                { AuthorizationPolicyName = "AssertTestScope" })
                     .SubscribeNotification<TestNotificationSubType, ResetEventTestObserver>(app,
                         s => s.ReceiveTestNotificationSubType)
                     .SubscribeNotification<TestNotification, ResetEventTestObserver>(app,
                         s => s.ReceiveTestNotification);
 
-                app.UseEndpoints(endpoints => {
+                app.UseEndpoints(endpoints =>
+                {
                     endpoints.MapControllers();
                 });
             }
