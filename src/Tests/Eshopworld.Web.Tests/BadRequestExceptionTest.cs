@@ -1,4 +1,6 @@
-﻿namespace Eshopworld.Web.Tests
+﻿using System.Collections.Generic;
+
+namespace Eshopworld.Web.Tests
 {
     using System.IO;
     using System.Linq;
@@ -22,17 +24,31 @@
                 const string genericBadParam = "my generic bad param";
                 const string genericBadParamMessage = "this is bad!";
 
-                var ex = new BadRequestException().AddNull(nullParam)
+                var ex = new BadRequestException()
+                    .AddNull(nullParam)
                     .AddBadFormat(badFormatParam)
                     .Add(genericBadParam, genericBadParamMessage);
 
                 var result = ex.ToResponse();
 
-                result.Parameters.Should().HaveCount(3);
+                //result.Parameters.Should().HaveCount(3);
 
-                result.Parameters.Select(p => p.Name).Should().Contain(nullParam);
-                result.Parameters.Select(p => p.Name).Should().Contain(badFormatParam);
-                result.Parameters.Select(p => p.Name).Should().Contain(genericBadParam);
+                var expectedParams = new List<BadRequestParameter>
+                {
+                    new BadRequestParameter { Name=nullParam, Description = $"Parameter {nullParam} should not be null."},
+                    new BadRequestParameter { Name=badFormatParam, Description = $"Parameter {badFormatParam} is in an incorrect format."},
+                    new BadRequestParameter { Name=genericBadParam, Description = genericBadParamMessage}
+                };
+
+                result.Parameters.Should().BeEquivalentTo(expectedParams);
+
+                result.Caller.Should().BeNullOrEmpty();
+
+                //var firstParam = result.Parameters.First();
+
+                //result.Parameters.Select(p => p.Name).Should().Contain(nullParam);
+                //result.Parameters.Select(p => p.Name).Should().Contain(badFormatParam);
+                //result.Parameters.Select(p => p.Name).Should().Contain(genericBadParam);
             }
         }
 
