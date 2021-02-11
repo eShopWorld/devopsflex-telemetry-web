@@ -18,17 +18,16 @@ namespace Eshopworld.Web
         /// <param name="ctx">http context instance</param>
         /// <param name="policyName">policy to run check against</param>
         /// <returns>true if succeeded, otherwise false (sets http response)</returns>
-        public static async Task<bool> PerformSecurityChecks(this HttpContext ctx,
-             string policyName)
+        public static async Task<bool> PerformSecurityChecks(this HttpContext ctx, string policyName)
         {
-            var policyEvaluator = (IPolicyEvaluator) ctx.RequestServices.GetService(typeof(IPolicyEvaluator));
+            var policyEvaluator = (IPolicyEvaluator)ctx.RequestServices.GetService(typeof(IPolicyEvaluator));
 
             if (policyEvaluator == null)
             {
                 throw new InvalidOperationException($"Unable to obtain {typeof(IPolicyEvaluator)} from the container");
             }
 
-            var policyProvider = (IAuthorizationPolicyProvider) ctx.RequestServices.GetService(typeof(IAuthorizationPolicyProvider));
+            var policyProvider = (IAuthorizationPolicyProvider)ctx.RequestServices.GetService(typeof(IAuthorizationPolicyProvider));
 
             if (policyProvider == null)
             {
@@ -50,9 +49,7 @@ namespace Eshopworld.Web
             }
 
             //authentication checks
-            var authenticationResult = await
-                policyEvaluator.AuthenticateAsync(policy,
-                    ctx);
+            var authenticationResult = await policyEvaluator.AuthenticateAsync(policy, ctx);
 
             if (!authenticationResult.Succeeded)
             {
