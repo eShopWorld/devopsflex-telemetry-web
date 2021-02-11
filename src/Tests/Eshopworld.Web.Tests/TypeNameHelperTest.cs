@@ -122,6 +122,25 @@ namespace Eshopworld.Web.Tests
             Assert.Equal(expected, TypeNameHelper.GetTypeDisplayName(type, fullName));
         }
 
+        public static TheoryData GetOpenGenericsTestData()
+        {
+            return new TheoryData<Type, bool, string>
+            {
+                { typeof(List<>), false, "List<>" },
+                { typeof(Dictionary<,>), false , "Dictionary<,>" },
+                { typeof(List<>), true , "System.Collections.Generic.List<>" },
+                { typeof(Dictionary<,>), true , "System.Collections.Generic.Dictionary<,>" },
+                { typeof(Level1<>.Level2<>.Level3<>), true, "Eshopworld.Web.Tests.TypeNameHelperTest+Level1<>+Level2<>+Level3<>" },
+            };
+        }
+
+        [Theory, IsLayer0]
+        [MemberData(nameof(GetOpenGenericsTestData))]
+        public void Can_pretty_print_open_generics(Type type, bool fullName, string expected)
+        {
+            Assert.Equal(expected, TypeNameHelper.GetTypeDisplayName(type, fullName));
+        }
+
         [Fact, IsLayer0]
         public void Can_pretty_print_PartiallyClosedGeneric()
         {
@@ -176,71 +195,11 @@ namespace Eshopworld.Web.Tests
             Assert.Equal(expected, TypeNameHelper.GetTypeDisplayName(closedInnerType, true));
         }
 
-        public static TheoryData GetOpenGenericsTestData()
-        {
-            //var openDictionaryType = typeof(Dictionary<,>);
-            //var genArgsDictionary = openDictionaryType.GetGenericArguments();
-            //genArgsDictionary[0] = typeof(B<>);
-            //var closedDictionaryType = openDictionaryType.MakeGenericType(genArgsDictionary);
-
-            //var openLevelType = typeof(Level1<>.Level2<>.Level3<>);
-            //var genArgsLevel = openLevelType.GetGenericArguments();
-            //genArgsLevel[1] = typeof(string);
-            //var closedLevelType = openLevelType.MakeGenericType(genArgsLevel);
-
-            //var openInnerType = typeof(OuterGeneric<>.InnerNonGeneric.InnerGeneric<,>.InnerGenericLeafNode<>);
-            //var genArgsInnerType = openInnerType.GetGenericArguments();
-            //genArgsInnerType[3] = typeof(bool);
-            //var closedInnerType = openInnerType.MakeGenericType(genArgsInnerType);
-
-            return new TheoryData<Type, bool, string>
-            {
-                { typeof(List<>), false, "List<>" },
-                { typeof(Dictionary<,>), false , "Dictionary<,>" },
-                { typeof(List<>), true , "System.Collections.Generic.List<>" },
-                { typeof(Dictionary<,>), true , "System.Collections.Generic.Dictionary<,>" },
-                { typeof(Level1<>.Level2<>.Level3<>), true, "Eshopworld.Web.Tests.TypeNameHelperTest+Level1<>+Level2<>+Level3<>" },
-                //{
-                //    typeof(PartiallyClosedGeneric<>).BaseType,
-                //    true,
-                //    "Eshopworld.Web.Tests.TypeNameHelperTest+C<, int>"
-                //},
-                //{
-                //    typeof(OuterGeneric<>.InnerNonGeneric.InnerGeneric<,>.InnerGenericLeafNode<>),
-                //    true,
-                //    "Eshopworld.Web.Tests.TypeNameHelperTest+OuterGeneric<>+InnerNonGeneric+InnerGeneric<,>+InnerGenericLeafNode<>"
-                //},
-                //{
-                //    closedDictionaryType,
-                //    true,
-                //    "System.Collections.Generic.Dictionary<Eshopworld.Web.Tests.TypeNameHelperTest+B<>,>"
-                //},
-                //{
-                //    closedLevelType,
-                //    true,
-                //    "Eshopworld.Web.Tests.TypeNameHelperTest+Level1<>+Level2<string>+Level3<>"
-                //},
-                //{
-                //    closedInnerType,
-                //    true,
-                //    "Eshopworld.Web.Tests.TypeNameHelperTest+OuterGeneric<>+InnerNonGeneric+InnerGeneric<,>+InnerGenericLeafNode<bool>"
-                //}
-            };
-        }
-
-        [Theory, IsLayer0]
-        [MemberData(nameof(GetOpenGenericsTestData))]
-        public void Can_pretty_print_open_generics(Type type, bool fullName, string expected)
-        {
-            Assert.Equal(expected, TypeNameHelper.GetTypeDisplayName(type, fullName));
-        }
-
         public static TheoryData GetTypeDisplayName_IncludesGenericParameterNamesWhenOptionIsSetData =>
             new TheoryData<Type, string>
             {
                 {  typeof(B<>),"Eshopworld.Web.Tests.TypeNameHelperTest+B<T>" },
                 {  typeof(C<,>),"Eshopworld.Web.Tests.TypeNameHelperTest+C<T1, T2>" },
-                //{  typeof(PartiallyClosedGeneric<>).BaseType,"Eshopworld.Web.Tests.TypeNameHelperTest+C<T, int>" },
                 {  typeof(Level1<>.Level2<>),"Eshopworld.Web.Tests.TypeNameHelperTest+Level1<T1>+Level2<T2>" },
             };
 
@@ -255,12 +214,20 @@ namespace Eshopworld.Web.Tests
             Assert.Equal(expected, actual);
         }
 
+        [Fact, IsLayer0]
+        public void GetTypeDisplayName_IncludesGenericParameterNamesWhenOptionIsSet_PartiallyClosedGeneric()
+        {
+            var type = typeof(PartiallyClosedGeneric<>).BaseType;
+            var actual = TypeNameHelper.GetTypeDisplayName(type, fullName: true, includeGenericParameterNames: true);
+
+            Assert.Equal("Eshopworld.Web.Tests.TypeNameHelperTest+C<T, int>", actual);
+        }
+
         public static TheoryData GetTypeDisplayName_WithoutFullName_IncludesGenericParameterNamesWhenOptionIsSetData =>
             new TheoryData<Type, string>
             {
                 {  typeof(B<>),"B<T>" },
                 {  typeof(C<,>),"C<T1, T2>" },
-                //{  typeof(PartiallyClosedGeneric<>).BaseType,"C<T, int>" },
                 {  typeof(Level1<>.Level2<>),"Level2<T2>" },
             };
 
@@ -273,6 +240,15 @@ namespace Eshopworld.Web.Tests
 
             // Assert
             Assert.Equal(expected, actual);
+        }
+
+        [Fact, IsLayer0]
+        public void GetTypeDisplayName_WithoutFullName_IncludesGenericParameterNamesWhenOptionIsSet_PartiallyClosedGeneric()
+        {
+            var type = typeof(PartiallyClosedGeneric<>).BaseType;
+            var actual = TypeNameHelper.GetTypeDisplayName(type, fullName: false, includeGenericParameterNames: true);
+
+            Assert.Equal("C<T, int>", actual);
         }
 
         public static TheoryData<Type, string> FullTypeNameData
