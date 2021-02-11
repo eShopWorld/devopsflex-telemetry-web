@@ -1,6 +1,8 @@
 ﻿using System;
+using System.Diagnostics.CodeAnalysis;
 using System.Security.Cryptography.X509Certificates;
 using Eshopworld.DevOps;
+using Eshopworld.Tests.Core;
 using FluentAssertions;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.Server.Kestrel.Core;
@@ -11,7 +13,8 @@ using Xunit;
 
 namespace Eshopworld.Web.Tests
 {
-    internal class TestHostingEnvironment :  IWebHostEnvironment
+    [ExcludeFromCodeCoverage]
+    internal class TestHostingEnvironment : IWebHostEnvironment
     {
         public string EnvironmentName { get; set; }
         public IFileProvider WebRootFileProvider { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
@@ -20,16 +23,30 @@ namespace Eshopworld.Web.Tests
         public string ContentRootPath { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
         public IFileProvider ContentRootFileProvider { get => throw new NotImplementedException(); set => throw new NotImplementedException(); }
     }
+
     public class KestrelConfiguratorTests
     {
-        [Fact]
+        [Theory, IsLayer0]
+        [InlineData(DeploymentEnvironment.CI, "*.ci.eshopworld.net")]
+        [InlineData(DeploymentEnvironment.Sand, "*.sandbox.eshopworld.com")]
+        [InlineData(DeploymentEnvironment.Test, "*.test.eshopworld.net")]
+        [InlineData(DeploymentEnvironment.Prep, "*.preprod.eshopworld.net")]
+        [InlineData(DeploymentEnvironment.Prod, "*.production.eshopworld.com")]
+        [InlineData(DeploymentEnvironment.Development, "localhost")]
+        public void GetCertSubjectName_ForValidEnumMember_ReturnsValidValue(DeploymentEnvironment environment, string expected)
+        {
+            var result = KestrelConfigurator.GetCertSubjectName(environment);
+            result.Should().Be(expected);
+        }
+
+        [Fact, IsLayer0]
         public void Configure_WhenSSlEndpoints_ShouldCreateCertificate()
         {
             //Arrange
             var endPoints = new (int port, bool isHttps)[] { (443, true) };
             var sut = new Mock<KestrelConfigurator>(endPoints, true);
-          
-            var webHostBuilderContext = new WebHostBuilderContext() { HostingEnvironment = new TestHostingEnvironment{EnvironmentName = "foo"} };
+
+            var webHostBuilderContext = new WebHostBuilderContext() { HostingEnvironment = new TestHostingEnvironment { EnvironmentName = "foo" } };
             var serviceProvider = new Mock<IServiceProvider>();
 
             serviceProvider
@@ -39,41 +56,69 @@ namespace Eshopworld.Web.Tests
             sut.Setup(m => m.GetCertificate(webHostBuilderContext.HostingEnvironment.EnvironmentName)).Returns(cert).Verifiable();
 
             //Act
-            sut.Object.Configure(webHostBuilderContext, new KestrelServerOptions(){ ApplicationServices = serviceProvider.Object});
+            sut.Object.Configure(webHostBuilderContext, new KestrelServerOptions() { ApplicationServices = serviceProvider.Object });
 
             //Assert
             sut.Verify();
-
         }
 
-        [Fact]
+        [Fact, IsLayer0]
+        public void Configure_WhenFailsDuringCertificateCreation_ShouldVerify()
+        {
+            //Arrange
+            var endPoints = new (int port, bool isHttps)[] { (443, true) };
+            var sut = new Mock<KestrelConfigurator>(endPoints, true);
+
+            var webHostBuilderContext = new WebHostBuilderContext() { HostingEnvironment = new TestHostingEnvironment { EnvironmentName = "foo" } };
+            var serviceProvider = new Mock<IServiceProvider>();
+
+            serviceProvider
+                .Setup(x => x.GetService(typeof(ILoggerFactory)))
+                .Returns(new Mock<ILoggerFactory>().Object);
+            sut.Setup(m => m.GetCertificate(webHostBuilderContext.HostingEnvironment.EnvironmentName)).Throws<Exception>().Verifiable();
+
+            //Act
+            sut.Object.Configure(webHostBuilderContext, new KestrelServerOptions() { ApplicationServices = serviceProvider.Object });
+
+            //Assert
+            sut.Verify();
+        }
+
+        [Fact, IsLayer0]
         public void Configure_WhenNoSSlEndpoints_ShouldNotCreateCertificate()
         {
             //Arrange
-            var endPoints = new (int port, bool isHttps)[] {(80, false)};
-            var sut=new Mock<KestrelConfigurator>(endPoints,false);
-           
+            var endPoints = new (int port, bool isHttps)[] { (80, false) };
+            var sut = new Mock<KestrelConfigurator>(endPoints, false);
+
             //Act
-            sut.Object.Configure(It.IsAny<WebHostBuilderContext>(),new KestrelServerOptions());
+            sut.Object.Configure(It.IsAny<WebHostBuilderContext>(), new KestrelServerOptions());
 
             //Assert
-            sut.Verify(m => m.GetCertificate(It.IsAny<string>()),Times.Never);
-
+            sut.Verify(m => m.GetCertificate(It.IsAny<string>()), Times.Never);
         }
 
-        [Fact]
+        [Theory, IsLayer0]
+        [InlineData("Development")]
+        [InlineData("blah")]
+        public void GetCertificate_WhenValidCertificate2_ShouldSucceed(string environmentName)
+        {
+            var cert = new KestrelConfigurator(null, false).GetCertificate(environmentName);
+
+            cert.Should().NotBe(null);
+        }
+
+        [Fact, IsLayer0]
         public void GetCertificate_WhenValidCertificate_ShouldSucceed()
         {
-            
-
             //Act
-            var cert=KestrelConfigurator.GetCertificate(DeploymentEnvironment.Development,(cert)=>true);
+            var cert = KestrelConfigurator.GetCertificate(DeploymentEnvironment.Development, (cert) => true);
 
             //Assert
             cert.Should().NotBe(null);
         }
 
-        [Fact]
+        [Fact, IsLayer0]
         public void GetCertificate_WhenNotValidCertificate_ShouldThrow()
         {
             //Act
@@ -83,19 +128,18 @@ namespace Eshopworld.Web.Tests
             act.Should().Throw<Exception>().Where(e => e.Message.StartsWith("The certificate for"));
         }
 
-        [Fact]
+        [Fact, IsLayer0]
         public void IsSslCertificate_WhenValidCertificate_ShouldReturnTrue()
         {
             //Arrange
             var cert = GetValidCertificate();
 
             //Act
-            var result=KestrelConfigurator.IsSslCertificate(cert);
+            var result = KestrelConfigurator.IsSslCertificate(cert);
 
             //Assert
             result.Should().BeTrue();
         }
-
 
         public static X509Certificate2 GetValidCertificate()
         {
@@ -104,6 +148,5 @@ namespace Eshopworld.Web.Tests
             var pfxPassword = "Password";
             return new X509Certificate2(privateKeyBytes, pfxPassword);
         }
-
     }
 }

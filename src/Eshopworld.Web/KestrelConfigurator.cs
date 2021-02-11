@@ -1,5 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using Eshopworld.Core;
@@ -12,7 +13,7 @@ namespace Eshopworld.Web
 {
     internal class KestrelConfigurator
     {
-        
+
         /// <summary>
         /// The ID of an certificate extension field which descibes the propose for which the public key may be used.
         /// </summary>
@@ -24,9 +25,8 @@ namespace Eshopworld.Web
         private const string ServerAuthenticationAllowedKeyUsage = "1.3.6.1.5.5.7.3.1";
 
         private readonly IEnumerable<(int port, bool isHttps)> _endpoints;
+
         private readonly bool _enableIpv6Binding;
-
-
 
         public KestrelConfigurator(IEnumerable<(int port, bool isHttps)> endpoints, bool enableIpv6Binding)
         {
@@ -69,7 +69,7 @@ namespace Eshopworld.Web
             return GetCertificate(environment);
         }
 
-        internal static X509Certificate2 GetCertificate(DeploymentEnvironment environment, Func<X509Certificate2,bool> isSlCertificatePredicate=null)
+        internal static X509Certificate2 GetCertificate(DeploymentEnvironment environment, Func<X509Certificate2, bool> isSlCertificatePredicate = null)
         {
             isSlCertificatePredicate ??= IsSslCertificate;
             var subject = GetCertSubjectName(environment);
@@ -111,7 +111,7 @@ namespace Eshopworld.Web
             }
         }
 
-        private static string GetCertSubjectName(DeploymentEnvironment environment)
+        internal static string GetCertSubjectName(DeploymentEnvironment environment)
         {
             switch (environment)
             {
@@ -132,12 +132,12 @@ namespace Eshopworld.Web
             }
         }
 
-
         /// <summary>
         /// Checks whether the certificate can be used to enable SSL traffic to the local server
         /// </summary>
         /// <param name="cert">Certificate to check.</param>
         /// <returns>True if the certificate can be used for SSL decoding, false otherwise.</returns>
+        [ExcludeFromCodeCoverage]
         internal static bool IsSslCertificate(X509Certificate2 cert)
         {
             // based on https://stackoverflow.com/questions/51322480/x509-certificate-intended-purpose-and-ssl
