@@ -1,4 +1,6 @@
-﻿namespace Eshopworld.Web
+﻿using System.Diagnostics.CodeAnalysis;
+
+namespace Eshopworld.Web
 {
     using System;
     using System.Linq;
@@ -11,6 +13,7 @@
     /// <summary>
     /// The middleware component that handles exceptions through <see cref="IBigBrother"/>.
     /// </summary>
+    [ExcludeFromCodeCoverage]
     public class BigBrotherExceptionMiddleware
     {
         internal readonly RequestDelegate Next;
