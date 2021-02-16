@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <Version>4.1.6</Version>
+    <Version>4.1.7</Version>
     <PackageReleaseNotes>
-      Remove unused RequestTelemetryInitializer.
+      Retrieve the most recent valid HTTPS certificate.
     </PackageReleaseNotes>
 
     <TargetFramework>netcoreapp3.1</TargetFramework>

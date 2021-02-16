@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Diagnostics.CodeAnalysis;
+using System.Linq;
 using System.Net;
 using System.Security.Cryptography.X509Certificates;
 using Eshopworld.Core;
@@ -18,6 +19,8 @@ namespace Eshopworld.Web
         /// The ID of an certificate extension field which descibes the propose for which the public key may be used.
         /// </summary>
         private const string EnhancedKeyUsageOid = "2.5.29.37";
+
+        private const string AspNetCoreDevCertificateFriendlyName = "ASP.NET Core HTTPS development certificate";
 
         /// <summary>
         /// The ID of the public key usage which allows using the certificate for the TLS authentication of a server.
@@ -69,41 +72,47 @@ namespace Eshopworld.Web
             return GetCertificate(environment);
         }
 
-        internal static X509Certificate2 GetCertificate(DeploymentEnvironment environment, Func<X509Certificate2, bool> isSlCertificatePredicate = null)
+        internal static X509Certificate2 GetCertificate(DeploymentEnvironment environment, Func<X509Certificate2, bool> isSslCertificatePredicate = null)
         {
-            isSlCertificatePredicate ??= IsSslCertificate;
+            isSslCertificatePredicate ??= IsSslCertificate;
             var subject = GetCertSubjectName(environment);
             var store = new X509Store(StoreName.My, StoreLocation.LocalMachine);
             try
             {
                 store.Open(OpenFlags.ReadOnly);
-                var certCollection = store.Certificates.Find(X509FindType.FindBySubjectDistinguishedName, $"CN={subject}, OU=Domain Control Validated", true);
+                var cert = store.Certificates
+                    .Find(X509FindType.FindBySubjectDistinguishedName, $"CN={subject}, OU=Domain Control Validated",
+                        true)
+                    .OfType<X509Certificate2>()
+                    .Where(x => x.NotBefore < DateTime.UtcNow)
+                    .OrderByDescending(x => x.NotAfter)
+                    .FirstOrDefault();
 
-                if (certCollection.Count == 0)
+                if (cert == null)
                 {
-                    // TODO: another temporary attempt to find the cert
-                    certCollection = store.Certificates.Find(X509FindType.FindBySubjectName, subject, false);
+                    var certCollection = store.Certificates
+                        .Find(X509FindType.FindBySubjectName, subject, false)
+                        .OfType<X509Certificate2>()
+                        .ToList();
 
-                    for (int i = 0; i < certCollection.Count; i++)
+                    var devCertificate = certCollection.SingleOrDefault(x => x.FriendlyName == AspNetCoreDevCertificateFriendlyName);
+                    if (devCertificate != null)
                     {
-                        if (!isSlCertificatePredicate(certCollection[i]))
-                        {
-                            certCollection.RemoveAt(i);
-                            i--;
-                        }
-                        else if (certCollection[i].FriendlyName == "ASP.NET Core HTTPS development certificate")
-                        {
-                            return certCollection[i];
-                        }
+                        return devCertificate;
                     }
+
+                    cert = certCollection.Where(x => x.NotBefore < DateTime.UtcNow)
+                        .Where(isSslCertificatePredicate)
+                        .OrderByDescending(x => x.NotAfter)
+                        .FirstOrDefault();
                 }
 
-                if (certCollection.Count == 0)
+                if (cert == null)
                 {
                     throw new Exception($"The certificate for {subject} has not been found.");
                 }
 
-                return certCollection[0];
+                return cert;
             }
             finally
             {
